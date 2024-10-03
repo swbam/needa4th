@@ -1,23 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-
-const courses = [
-  'Henry Horton', 'Mccabe', 'Harpeth Hills', 'Ted Rhodes', 'Towhee', 'Franklin Bridge',
-  'Little Course', 'Nashboro', 'Old Fort', 'Cheekwood', 'Hermitage (Presidents)',
-  'Shelby', 'Two Rivers', 'Percy Warner', 'Gaylord', 'Hermitage (Generals)',
-  'Montgomery Bell', 'Greystone'
-];
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const players = [
-  'Parker Smith', 'Dominic Nanni', 'Connor Stanley', 'Jesus Rios', 'Derek Kozakiewicz',
-  'Jackson Smith', 'Bob Murray', 'Mike Brooks', 'Andrew Rocco', 'Heath Mansfield',
-  'Lane Hostettler', 'Josh Alcala', 'Richard Caruso', 'Martin Clayton', 'Salvador Guzman',
-  'Jason Story', 'Nathan Bateman', 'Seth Bambling', 'Josh Link', 'Chris Baker',
-  'Kyle McFarland', 'Gilmore Connors', 'Alex York', 'Guest', 'John Shrader'
-];
+  'Alex York', 'Andrew Rocco', 'Bob Murray', 'Chris Baker', 'Connor Stanley', 
+  'Derek Kozakiewicz', 'Dominic Nanni', 'Gilmore Connors', 'Guest', 'Heath Mansfield',
+  'Jackson Smith', 'Jason Story', 'Jesus Rios', 'John Shrader', 'Josh Alcala', 
+  'Josh Link', 'Kyle McFarland', 'Lane Hostettler', 'Martin Clayton', 'Mike Brooks', 
+  'Nathan Bateman', 'Parker Smith', 'Richard Caruso', 'Salvador Guzman', 'Seth Bambling'
+].sort();
 
 const fetchSchedule = async () => {
   // This is a mock API call. Replace with your actual API endpoint.
@@ -33,6 +27,8 @@ const Schedule = () => {
     queryKey: ['schedule'],
     queryFn: fetchSchedule,
   });
+
+  const [selectedPlayer, setSelectedPlayer] = useState('');
 
   if (isLoading) return <div className="text-center mt-8">Loading...</div>;
   if (error) return <div className="text-center mt-8 text-red-500">Error loading schedule</div>;
@@ -65,9 +61,19 @@ const Schedule = () => {
                               This is for {teeTime.time} on {new Date(teeTime.date).toLocaleDateString()} at {teeTime.location}.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
+                          <Select onValueChange={setSelectedPlayer}>
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select your name" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {players.map((player) => (
+                                <SelectItem key={player} value={player}>{player}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                           <AlertDialogFooter>
                             <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction>Confirm</AlertDialogAction>
+                            <AlertDialogAction disabled={!selectedPlayer}>Confirm</AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>
                       </AlertDialog>

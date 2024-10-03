@@ -20,9 +20,9 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <Router>
         <SaaSFramework>
-          <div className="flex flex-col min-h-screen bg-green-50">
+          <div className="flex flex-col min-h-screen w-full bg-green-50">
             <Navbar />
-            <main className="flex-grow container mx-auto px-4 py-8 mb-16">
+            <main className="flex-grow w-full">
               <Routes>
                 <Route path="/" element={<Navigate to="/schedule" replace />} />
                 <Route path="/schedule" element={<Schedule />} />
