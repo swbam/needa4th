@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Navbar from './components/Navbar';
-import Dashboard from './pages/Dashboard';
+import BottomNav from './components/BottomNav';
 import Schedule from './pages/Schedule';
 import AddTeeTime from './pages/AddTeeTime';
 import AddCourse from './pages/AddCourse';
@@ -22,10 +22,9 @@ const App = () => {
         <SaaSFramework>
           <div className="flex flex-col min-h-screen bg-green-50">
             <Navbar />
-            <main className="flex-grow container mx-auto px-4 py-8">
+            <main className="flex-grow container mx-auto px-4 py-8 mb-16">
               <Routes>
-                <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/" element={<Navigate to="/schedule" replace />} />
                 <Route path="/schedule" element={<Schedule />} />
                 <Route path="/add-tee-time" element={<AddTeeTime />} />
                 <Route path="/add-course" element={<AddCourse />} />
@@ -35,6 +34,7 @@ const App = () => {
                 <Route path="/login" element={<LoginPage />} />
               </Routes>
             </main>
+            <BottomNav />
           </div>
         </SaaSFramework>
       </Router>
