@@ -3,6 +3,20 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+  font-family: 'Bellenord';
+  src: url('/Bellenord.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Benton Sans Regular';
+  src: url('/BentonSans Regular.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
  
 @layer base {
   :root {
@@ -62,11 +76,4 @@
   button {
     font-family: 'Benton Sans Regular', sans-serif;
   }
-}
-
-@font-face {
-  font-family: 'Benton Sans Regular';
-  src: url('/BentonSans Regular.otf') format('opentype');
-  font-weight: normal;
-  font-style: normal;
 }
