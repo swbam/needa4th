@@ -69,7 +69,6 @@ export const useDeleteNeeda4th = () => {
     });
 };
 
-// Add the missing useUpdateTeeTime hook
 export const useUpdateTeeTime = () => {
     const queryClient = useQueryClient();
     return useMutation({
