@@ -9,6 +9,7 @@ import AddCourse from './pages/AddCourse';
 import Pricing from './pages/Pricing';
 import Settings from './pages/Settings';
 import { Toaster } from "@/components/ui/sonner";
+import SaaSFramework from './components/SaaSFramework';
 
 const queryClient = new QueryClient();
 
@@ -16,20 +17,22 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <Router>
-        <div className="flex flex-col min-h-screen bg-green-50">
-          <Navbar />
-          <main className="flex-grow container mx-auto px-4 py-8">
-            <Routes>
-              <Route path="/" element={<Navigate to="/dashboard" replace />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/schedule" element={<Schedule />} />
-              <Route path="/add-tee-time" element={<AddTeeTime />} />
-              <Route path="/add-course" element={<AddCourse />} />
-              <Route path="/pricing" element={<Pricing />} />
-              <Route path="/settings" element={<Settings />} />
-            </Routes>
-          </main>
-        </div>
+        <SaaSFramework>
+          <div className="flex flex-col min-h-screen bg-green-50">
+            <Navbar />
+            <main className="flex-grow container mx-auto px-4 py-8">
+              <Routes>
+                <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/schedule" element={<Schedule />} />
+                <Route path="/add-tee-time" element={<AddTeeTime />} />
+                <Route path="/add-course" element={<AddCourse />} />
+                <Route path="/pricing" element={<Pricing />} />
+                <Route path="/settings" element={<Settings />} />
+              </Routes>
+            </main>
+          </div>
+        </SaaSFramework>
       </Router>
       <Toaster />
     </QueryClientProvider>
