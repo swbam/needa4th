@@ -11,7 +11,6 @@ import Settings from './pages/Settings';
 import AdminDashboard from './pages/AdminDashboard';
 import LoginPage from './pages/LoginPage';
 import { Toaster } from "@/components/ui/sonner";
-import SaaSFramework from './components/SaaSFramework';
 
 const queryClient = new QueryClient();
 
@@ -19,24 +18,22 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <Router>
-        <SaaSFramework>
-          <div className="flex flex-col min-h-screen w-full bg-green-50">
-            <Navbar />
-            <main className="flex-grow w-full">
-              <Routes>
-                <Route path="/" element={<Navigate to="/schedule" replace />} />
-                <Route path="/schedule" element={<Schedule />} />
-                <Route path="/add-tee-time" element={<AddTeeTime />} />
-                <Route path="/add-course" element={<AddCourse />} />
-                <Route path="/pricing" element={<Pricing />} />
-                <Route path="/settings" element={<Settings />} />
-                <Route path="/admin" element={<AdminDashboard />} />
-                <Route path="/login" element={<LoginPage />} />
-              </Routes>
-            </main>
-            <BottomNav />
-          </div>
-        </SaaSFramework>
+        <div className="flex flex-col min-h-screen">
+          <Navbar />
+          <main className="flex-grow">
+            <Routes>
+              <Route path="/" element={<Navigate to="/schedule" replace />} />
+              <Route path="/schedule" element={<Schedule />} />
+              <Route path="/add-tee-time" element={<AddTeeTime />} />
+              <Route path="/add-course" element={<AddCourse />} />
+              <Route path="/pricing" element={<Pricing />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/login" element={<LoginPage />} />
+            </Routes>
+          </main>
+          <BottomNav />
+        </div>
       </Router>
       <Toaster />
     </QueryClientProvider>
