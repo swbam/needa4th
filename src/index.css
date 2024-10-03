@@ -1,23 +1,39 @@
-@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&display=swap');
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 @font-face {
   font-family: 'Bellenord';
   src: url('/Bellenord.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
-  font-family: 'Benton Sans Regular';
+  font-family: 'BentonSans Regular';
   src: url('/BentonSans Regular.otf') format('opentype');
   font-weight: normal;
   font-style: normal;
+  font-display: swap;
 }
- 
+
+@font-face {
+  font-family: 'BentonSans Bold';
+  src: url('/BentonSans Bold.otf') format('opentype');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'BentonSans Medium';
+  src: url('/BentonSans Medium.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -70,10 +86,13 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground font-serif;
-    font-family: 'Merriweather', serif;
+    @apply bg-background text-foreground;
+    font-family: 'BentonSans Regular', sans-serif;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'BentonSans Bold', sans-serif;
   }
   button {
-    font-family: 'Benton Sans Regular', sans-serif;
+    font-family: 'BentonSans Regular', sans-serif;
   }
 }
