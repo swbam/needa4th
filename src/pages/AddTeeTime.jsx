@@ -1,15 +1,30 @@
 import React from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 
+const courses = [
+  'Henry Horton', 'Mccabe', 'Harpeth Hills', 'Ted Rhodes', 'Towhee', 'Franklin Bridge',
+  'Little Course', 'Nashboro', 'Old Fort', 'Cheekwood', 'Hermitage (Presidents)',
+  'Shelby', 'Two Rivers', 'Percy Warner', 'Gaylord', 'Hermitage (Generals)',
+  'Montgomery Bell', 'Greystone'
+];
+
+const players = [
+  'Parker Smith', 'Dominic Nanni', 'Connor Stanley', 'Jesus Rios', 'Derek Kozakiewicz',
+  'Jackson Smith', 'Bob Murray', 'Mike Brooks', 'Andrew Rocco', 'Heath Mansfield',
+  'Lane Hostettler', 'Josh Alcala', 'Richard Caruso', 'Martin Clayton', 'Salvador Guzman',
+  'Jason Story', 'Nathan Bateman', 'Seth Bambling', 'Josh Link', 'Chris Baker',
+  'Kyle McFarland', 'Gilmore Connors', 'Alex York', 'Guest', 'John Shrader'
+];
+
 const AddTeeTime = () => {
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const { control, handleSubmit, formState: { errors } } = useForm();
 
   const onSubmit = (data) => {
-    // This is where you would typically send the data to your backend
     console.log(data);
     toast.success("Tee time added successfully!");
   };
@@ -20,23 +35,65 @@ const AddTeeTime = () => {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 max-w-md mx-auto">
         <div>
           <Label htmlFor="date">Date</Label>
-          <Input type="date" id="date" {...register("date", { required: true })} />
+          <Controller
+            name="date"
+            control={control}
+            rules={{ required: true }}
+            render={({ field }) => <Input type="date" id="date" {...field} />}
+          />
           {errors.date && <span className="text-red-500">This field is required</span>}
         </div>
         <div>
           <Label htmlFor="location">Location</Label>
-          <Input type="text" id="location" {...register("location", { required: true })} />
+          <Controller
+            name="location"
+            control={control}
+            rules={{ required: true }}
+            render={({ field }) => (
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a course" />
+                </SelectTrigger>
+                <SelectContent>
+                  {courses.map((course) => (
+                    <SelectItem key={course} value={course}>{course}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          />
           {errors.location && <span className="text-red-500">This field is required</span>}
         </div>
         <div>
           <Label htmlFor="time">Time</Label>
-          <Input type="time" id="time" {...register("time", { required: true })} />
+          <Controller
+            name="time"
+            control={control}
+            rules={{ required: true }}
+            render={({ field }) => <Input type="time" id="time" {...field} />}
+          />
           {errors.time && <span className="text-red-500">This field is required</span>}
         </div>
         <div>
-          <Label htmlFor="players">Number of Players</Label>
-          <Input type="number" id="players" {...register("players", { required: true, min: 1, max: 4 })} />
-          {errors.players && <span className="text-red-500">Please enter a number between 1 and 4</span>}
+          <Label htmlFor="organizer">Organizer</Label>
+          <Controller
+            name="organizer"
+            control={control}
+            rules={{ required: true }}
+            render={({ field }) => (
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select an organizer" />
+                </SelectTrigger>
+                <SelectContent>
+                  {players.map((player) => (
+                    <SelectItem key={player} value={player}>{player}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          />
+          {errors.organizer && <span className="text-red-500">This field is required</span>}
         </div>
         <Button type="submit" className="w-full">Add Tee Time</Button>
       </form>
