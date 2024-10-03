@@ -61,3 +61,39 @@ export const useDeleteNeeda4th = () => {
         },
     });
 };
+
+// New hooks for tee_times table
+export const useTeeTimes = () => useQuery({
+    queryKey: ['tee_times'],
+    queryFn: () => fromSupabase(supabase.from('tee_times').select('*').order('date', { ascending: true })),
+});
+
+export const useAddTeeTime = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (newTeeTime) => fromSupabase(supabase.from('tee_times').insert([newTeeTime])),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['tee_times'] });
+        },
+    });
+};
+
+export const useUpdateTeeTime = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: ({ id, ...updateData }) => fromSupabase(supabase.from('tee_times').update(updateData).eq('id', id)),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['tee_times'] });
+        },
+    });
+};
+
+export const useDeleteTeeTime = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (id) => fromSupabase(supabase.from('tee_times').delete().eq('id', id)),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['tee_times'] });
+        },
+    });
+};
