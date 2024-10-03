@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Navbar from './components/Navbar';
 import Schedule from './pages/Schedule';
 import AddTeeTime from './pages/AddTeeTime';
+import AddCourse from './pages/AddCourse';
 import { Toaster } from "@/components/ui/sonner";
 
 const queryClient = new QueryClient();
@@ -19,6 +20,7 @@ const App = () => {
               <Route path="/" element={<Navigate to="/schedule" replace />} />
               <Route path="/schedule" element={<Schedule />} />
               <Route path="/add-tee-time" element={<AddTeeTime />} />
+              <Route path="/add-course" element={<AddCourse />} />
             </Routes>
           </main>
         </div>

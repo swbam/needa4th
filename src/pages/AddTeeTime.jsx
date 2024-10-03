@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,13 +6,6 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
-const courses = [
-  'Henry Horton', 'Mccabe', 'Harpeth Hills', 'Ted Rhodes', 'Towhee', 'Franklin Bridge',
-  'Little Course', 'Nashboro', 'Old Fort', 'Cheekwood', 'Hermitage (Presidents)',
-  'Shelby', 'Two Rivers', 'Percy Warner', 'Gaylord', 'Hermitage (Generals)',
-  'Montgomery Bell', 'Greystone'
-];
 
 const players = [
   'Parker Smith', 'Dominic Nanni', 'Connor Stanley', 'Jesus Rios', 'Derek Kozakiewicz',
@@ -24,6 +17,12 @@ const players = [
 
 const AddTeeTime = () => {
   const { control, handleSubmit, formState: { errors } } = useForm();
+  const [courses, setCourses] = useState([]);
+
+  useEffect(() => {
+    const storedCourses = JSON.parse(localStorage.getItem('courses') || '[]');
+    setCourses(storedCourses);
+  }, []);
 
   const onSubmit = (data) => {
     console.log(data);
@@ -61,7 +60,7 @@ const AddTeeTime = () => {
                     </SelectTrigger>
                     <SelectContent>
                       {courses.map((course) => (
-                        <SelectItem key={course} value={course}>{course}</SelectItem>
+                        <SelectItem key={course.id} value={course.name}>{course.name}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>

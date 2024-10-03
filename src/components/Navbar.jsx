@@ -16,6 +16,9 @@ const Navbar = () => {
             <Link to="/add-tee-time" className="text-green-800 hover:text-green-600 px-3 py-2 text-sm font-medium">
               Add Tee Time
             </Link>
+            <Link to="/add-course" className="text-green-800 hover:text-green-600 px-3 py-2 text-sm font-medium">
+              Add Course
+            </Link>
           </div>
         </div>
       </div>
