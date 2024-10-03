@@ -5,7 +5,7 @@
 @tailwind utilities;
 
 @font-face {
-  font-family: 'Bellenord';
+  font-family: 'Bellenord' , sans-serif !important;
   src: url('/Bellenord.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
@@ -13,11 +13,11 @@
 
 @font-face {
   font-family: 'Benton Sans Regular';
-  src: url('/BentonSans Regular.otf') format('opentype');
+  src: url('/BentonSansRegular.otf') format('opentype');
   font-weight: normal;
   font-style: normal;
 }
- 
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -41,7 +41,7 @@
     --ring: 142 76% 36%;
     --radius: 0.5rem;
   }
- 
+
   .dark {
     --background: 20 14.3% 4.1%;
     --foreground: 60 9.1% 97.8%;
@@ -64,16 +64,16 @@
     --ring: 142 70.6% 45.3%;
   }
 }
- 
+
 @layer base {
   * {
     @apply border-border;
   }
   body {
     @apply bg-background text-foreground font-serif;
-    font-family: 'Merriweather', serif;
+    font-family: 'BentonSansRegular', sans-serif;
   }
   button {
-    font-family: 'Benton Sans Regular', sans-serif;
+    font-family: 'BentonSansRegular', sans-serif;
   }
 }
