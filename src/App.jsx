@@ -6,6 +6,9 @@ import Schedule from './pages/Schedule';
 import AddTeeTime from './pages/AddTeeTime';
 import AddCourse from './pages/AddCourse';
 import { Toaster } from "@/components/ui/sonner";
+import Dashboard from './pages/Dashboard';
+import Pricing from './pages/Pricing';
+import Settings from './pages/Settings';
 
 const queryClient = new QueryClient();
 
@@ -17,10 +20,13 @@ const App = () => {
           <Navbar />
           <main className="flex-grow container mx-auto px-4 py-8">
             <Routes>
-              <Route path="/" element={<Navigate to="/schedule" replace />} />
+              <Route path="/" element={<Navigate to="/dashboard" replace />} />
+              <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/schedule" element={<Schedule />} />
               <Route path="/add-tee-time" element={<AddTeeTime />} />
               <Route path="/add-course" element={<AddCourse />} />
+              <Route path="/pricing" element={<Pricing />} />
+              <Route path="/settings" element={<Settings />} />
             </Routes>
           </main>
         </div>
