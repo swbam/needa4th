@@ -35,11 +35,20 @@ const Schedule = () => {
   if (isLoading) return <div className="text-center mt-8">Loading...</div>;
   if (error) return <div className="text-center mt-8 text-red-500">Error loading schedule: {error.message}</div>;
 
+  if (!schedule || schedule.length === 0) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-3xl font-bold text-green-800 mb-6">Tee Times</h1>
+        <p className="text-center">No tee times available. Please add some tee times or check if the tee_times table exists in your Supabase project.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold text-green-800 mb-6">Tee Times</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {schedule && schedule.map((teeTime) => (
+        {schedule.map((teeTime) => (
           <Card key={teeTime.id} className="bg-white shadow-lg">
             <CardHeader>
               <CardTitle className="text-xl font-bold text-green-800">{teeTime.location}</CardTitle>

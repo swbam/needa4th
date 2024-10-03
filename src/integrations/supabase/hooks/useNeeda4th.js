@@ -3,24 +3,15 @@ import { supabase } from '../supabase';
 
 const fromSupabase = async (query) => {
     const { data, error } = await query;
-    if (error) throw new Error(error.message);
+    if (error) {
+        if (error.code === '42P01') {
+            console.error('Table does not exist. Please create the table in Supabase.');
+            return [];
+        }
+        throw new Error(error.message);
+    }
     return data;
 };
-
-/*
-### needa4th
-
-| name       | type                     | format | required |
-|------------|--------------------------|--------|----------|
-| id         | int8                     | number | true     |
-| created_at | timestamp with time zone | string | true     |
-
-Note: 
-- 'id' is a Primary Key.
-- 'created_at' has a default value of now().
-
-No foreign key relationships are defined for this table.
-*/
 
 export const useNeeda4th = (id) => useQuery({
     queryKey: ['needa4th', id],
@@ -62,16 +53,29 @@ export const useDeleteNeeda4th = () => {
     });
 };
 
-// New hooks for tee_times table
 export const useTeeTimes = () => useQuery({
     queryKey: ['tee_times'],
-    queryFn: () => fromSupabase(supabase.from('tee_times').select('*').order('date', { ascending: true })),
+    queryFn: async () => {
+        try {
+            return await fromSupabase(supabase.from('tee_times').select('*').order('date', { ascending: true }));
+        } catch (error) {
+            console.error('Error fetching tee times:', error);
+            return [];
+        }
+    },
 });
 
 export const useAddTeeTime = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (newTeeTime) => fromSupabase(supabase.from('tee_times').insert([newTeeTime])),
+        mutationFn: async (newTeeTime) => {
+            try {
+                return await fromSupabase(supabase.from('tee_times').insert([newTeeTime]));
+            } catch (error) {
+                console.error('Error adding tee time:', error);
+                throw error;
+            }
+        },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['tee_times'] });
         },
