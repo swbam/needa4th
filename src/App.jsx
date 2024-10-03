@@ -2,13 +2,13 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Navbar from './components/Navbar';
+import Dashboard from './pages/Dashboard';
 import Schedule from './pages/Schedule';
 import AddTeeTime from './pages/AddTeeTime';
 import AddCourse from './pages/AddCourse';
-import { Toaster } from "@/components/ui/sonner";
-import Dashboard from './pages/Dashboard';
 import Pricing from './pages/Pricing';
 import Settings from './pages/Settings';
+import { Toaster } from "@/components/ui/sonner";
 
 const queryClient = new QueryClient();
 
