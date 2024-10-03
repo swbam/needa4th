@@ -14,6 +14,11 @@ const createTeeTimesTable = async () => {
     if (error) throw new Error('Failed to create tee_times table');
 };
 
+const addDateColumnToTeeTimesTable = async () => {
+    const { error } = await supabase.rpc('add_date_column_to_tee_times');
+    if (error) throw new Error('Failed to add date column to tee_times table');
+};
+
 export const useTeeTimes = () => useQuery({
     queryKey: ['tee_times'],
     queryFn: async () => {
@@ -22,6 +27,9 @@ export const useTeeTimes = () => useQuery({
         } catch (error) {
             if (error.message.includes('relation "public.tee_times" does not exist')) {
                 await createTeeTimesTable();
+                return await fromSupabase(supabase.from('tee_times').select('*').order('date', { ascending: true }));
+            } else if (error.message.includes('column tee_times.date does not exist')) {
+                await addDateColumnToTeeTimesTable();
                 return await fromSupabase(supabase.from('tee_times').select('*').order('date', { ascending: true }));
             }
             throw error;
