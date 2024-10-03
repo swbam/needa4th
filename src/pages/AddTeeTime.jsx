@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { importAllData } from '../utils/importData';
 
 const players = [
   'Parker Smith', 'Dominic Nanni', 'Connor Stanley', 'Jesus Rios', 'Derek Kozakiewicz',
@@ -29,9 +30,23 @@ const AddTeeTime = () => {
     toast.success("Tee time added successfully!");
   };
 
+  const handleImport = async () => {
+    const csvData = `
+      // ... (paste the entire CSV data here)
+    `;
+    
+    try {
+      await importAllData(csvData);
+      toast.success("Data imported successfully!");
+    } catch (error) {
+      console.error('Error importing data:', error);
+      toast.error("Error importing data. Please check the console for details.");
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
-      <Card className="max-w-md mx-auto">
+      <Card className="max-w-md mx-auto mb-8">
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-green-800">Add Tee Time</CardTitle>
         </CardHeader>
@@ -101,6 +116,17 @@ const AddTeeTime = () => {
             </div>
             <Button type="submit" className="w-full bg-green-800 hover:bg-green-700">Add Tee Time</Button>
           </form>
+        </CardContent>
+      </Card>
+      
+      <Card className="max-w-md mx-auto">
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold text-green-800">Import Data</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Button onClick={handleImport} className="w-full bg-blue-600 hover:bg-blue-700">
+            Import Tee Times and Users
+          </Button>
         </CardContent>
       </Card>
     </div>
