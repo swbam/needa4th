@@ -68,3 +68,14 @@ export const useDeleteNeeda4th = () => {
         },
     });
 };
+
+// Add the missing useUpdateTeeTime hook
+export const useUpdateTeeTime = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: ({ id, ...updateData }) => fromSupabase(supabase.from('tee_times').update(updateData).eq('id', id)),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['tee_times'] });
+        },
+    });
+};
