@@ -9,26 +9,19 @@ const fromSupabase = async (query) => {
     return data;
 };
 
-const updateTeeTimesTable = async () => {
-    const { error } = await supabase.rpc('update_tee_times_table');
-    if (error) throw new Error('Failed to update tee_times table');
-};
-
-const createOrUpdateUsersTable = async () => {
-    const { error } = await supabase.rpc('create_or_update_users_table');
-    if (error) throw new Error('Failed to create or update users table');
+const ensureTablesExist = async () => {
+    await supabase.rpc('create_or_update_tee_times_table');
+    await supabase.rpc('create_or_update_users_table');
 };
 
 export const useTeeTimes = () => useQuery({
     queryKey: ['tee_times'],
     queryFn: async () => {
         try {
+            await ensureTablesExist();
             return await fromSupabase(supabase.from('tee_times').select('*').order('date', { ascending: true }));
         } catch (error) {
-            if (error.message.includes('column "date" does not exist')) {
-                await updateTeeTimesTable();
-                return await fromSupabase(supabase.from('tee_times').select('*').order('date', { ascending: true }));
-            }
+            console.error('Error fetching tee times:', error);
             throw error;
         }
     },
@@ -36,18 +29,37 @@ export const useTeeTimes = () => useQuery({
 
 export const useNeeda4th = (id) => useQuery({
     queryKey: ['needa4th', id],
-    queryFn: () => fromSupabase(supabase.from('needa4th').select('*').eq('id', id).single()),
+    queryFn: async () => {
+        try {
+            await ensureTablesExist();
+            return await fromSupabase(supabase.from('needa4th').select('*').eq('id', id).single());
+        } catch (error) {
+            console.error('Error fetching needa4th:', error);
+            throw error;
+        }
+    },
 });
 
 export const useNeeda4ths = () => useQuery({
     queryKey: ['needa4th'],
-    queryFn: () => fromSupabase(supabase.from('needa4th').select('*')),
+    queryFn: async () => {
+        try {
+            await ensureTablesExist();
+            return await fromSupabase(supabase.from('needa4th').select('*'));
+        } catch (error) {
+            console.error('Error fetching needa4ths:', error);
+            throw error;
+        }
+    },
 });
 
 export const useAddNeeda4th = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (newNeeda4th) => fromSupabase(supabase.from('needa4th').insert([newNeeda4th])),
+        mutationFn: async (newNeeda4th) => {
+            await ensureTablesExist();
+            return await fromSupabase(supabase.from('needa4th').insert([newNeeda4th]));
+        },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['needa4th'] });
         },
@@ -57,7 +69,10 @@ export const useAddNeeda4th = () => {
 export const useUpdateNeeda4th = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: ({ id, ...updateData }) => fromSupabase(supabase.from('needa4th').update(updateData).eq('id', id)),
+        mutationFn: async ({ id, ...updateData }) => {
+            await ensureTablesExist();
+            return await fromSupabase(supabase.from('needa4th').update(updateData).eq('id', id));
+        },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['needa4th'] });
         },
@@ -67,7 +82,10 @@ export const useUpdateNeeda4th = () => {
 export const useDeleteNeeda4th = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (id) => fromSupabase(supabase.from('needa4th').delete().eq('id', id)),
+        mutationFn: async (id) => {
+            await ensureTablesExist();
+            return await fromSupabase(supabase.from('needa4th').delete().eq('id', id));
+        },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['needa4th'] });
         },
@@ -77,7 +95,10 @@ export const useDeleteNeeda4th = () => {
 export const useUpdateTeeTime = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: ({ id, ...updateData }) => fromSupabase(supabase.from('tee_times').update(updateData).eq('id', id)),
+        mutationFn: async ({ id, ...updateData }) => {
+            await ensureTablesExist();
+            return await fromSupabase(supabase.from('tee_times').update(updateData).eq('id', id));
+        },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['tee_times'] });
         },
@@ -88,12 +109,10 @@ export const useUsers = () => useQuery({
     queryKey: ['users'],
     queryFn: async () => {
         try {
+            await ensureTablesExist();
             return await fromSupabase(supabase.from('users').select('*'));
         } catch (error) {
-            if (error.message.includes('relation "users" does not exist')) {
-                await createOrUpdateUsersTable();
-                return await fromSupabase(supabase.from('users').select('*'));
-            }
+            console.error('Error fetching users:', error);
             throw error;
         }
     },
