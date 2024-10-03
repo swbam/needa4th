@@ -52,7 +52,7 @@ const Schedule = () => {
                     ) : (
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
-                          <Button variant="outline" className="w-full">Join</Button>
+                          <Button variant="outline" className="w-full bg-black text-white hover:bg-gray-800">Join</Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
