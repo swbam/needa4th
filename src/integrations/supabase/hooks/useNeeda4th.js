@@ -9,14 +9,14 @@ const fromSupabase = async (query) => {
     return data;
 };
 
-const createTeeTimesTable = async () => {
-    const { error } = await supabase.rpc('create_tee_times_table');
-    if (error) throw new Error('Failed to create tee_times table');
+const updateTeeTimesTable = async () => {
+    const { error } = await supabase.rpc('update_tee_times_table');
+    if (error) throw new Error('Failed to update tee_times table');
 };
 
-const addDateColumnToTeeTimesTable = async () => {
-    const { error } = await supabase.rpc('add_date_column_to_tee_times');
-    if (error) throw new Error('Failed to add date column to tee_times table');
+const createOrUpdateUsersTable = async () => {
+    const { error } = await supabase.rpc('create_or_update_users_table');
+    if (error) throw new Error('Failed to create or update users table');
 };
 
 export const useTeeTimes = () => useQuery({
@@ -25,11 +25,8 @@ export const useTeeTimes = () => useQuery({
         try {
             return await fromSupabase(supabase.from('tee_times').select('*').order('date', { ascending: true }));
         } catch (error) {
-            if (error.message.includes('relation "public.tee_times" does not exist')) {
-                await createTeeTimesTable();
-                return await fromSupabase(supabase.from('tee_times').select('*').order('date', { ascending: true }));
-            } else if (error.message.includes('column tee_times.date does not exist')) {
-                await addDateColumnToTeeTimesTable();
+            if (error.message.includes('column "date" does not exist')) {
+                await updateTeeTimesTable();
                 return await fromSupabase(supabase.from('tee_times').select('*').order('date', { ascending: true }));
             }
             throw error;
@@ -86,3 +83,18 @@ export const useUpdateTeeTime = () => {
         },
     });
 };
+
+export const useUsers = () => useQuery({
+    queryKey: ['users'],
+    queryFn: async () => {
+        try {
+            return await fromSupabase(supabase.from('users').select('*'));
+        } catch (error) {
+            if (error.message.includes('relation "users" does not exist')) {
+                await createOrUpdateUsersTable();
+                return await fromSupabase(supabase.from('users').select('*'));
+            }
+            throw error;
+        }
+    },
+});
