@@ -1,5 +1,13 @@
 import { supabase } from '../integrations/supabase/supabase';
 
+const createTables = async () => {
+  const { error: teeTimesError } = await supabase.rpc('create_tee_times_table');
+  if (teeTimesError) console.error('Error creating tee_times table:', teeTimesError);
+
+  const { error: usersError } = await supabase.rpc('create_users_table');
+  if (usersError) console.error('Error creating users table:', usersError);
+};
+
 const importTeeTimes = async (csvData) => {
   const rows = csvData.split('\n').slice(1); // Skip header row
   const teeTimes = rows.filter(row => row.trim() !== '').map(row => {
@@ -62,6 +70,7 @@ const importUsers = async (csvData) => {
 };
 
 export const importAllData = async (csvData) => {
+  await createTables();
   await importTeeTimes(csvData);
   await importUsers(csvData);
 };
