@@ -8,6 +8,8 @@ import AddTeeTime from './pages/AddTeeTime';
 import AddCourse from './pages/AddCourse';
 import Pricing from './pages/Pricing';
 import Settings from './pages/Settings';
+import AdminDashboard from './pages/AdminDashboard';
+import LoginPage from './pages/LoginPage';
 import { Toaster } from "@/components/ui/sonner";
 import SaaSFramework from './components/SaaSFramework';
 
@@ -29,6 +31,8 @@ const App = () => {
                 <Route path="/add-course" element={<AddCourse />} />
                 <Route path="/pricing" element={<Pricing />} />
                 <Route path="/settings" element={<Settings />} />
+                <Route path="/admin" element={<AdminDashboard />} />
+                <Route path="/login" element={<LoginPage />} />
               </Routes>
             </main>
           </div>

@@ -28,6 +28,9 @@ const Navbar = () => {
             <Link to="/settings" className="text-green-800 hover:text-green-600 px-3 py-2 text-sm font-medium">
               Settings
             </Link>
+            <Link to="/login" className="text-green-800 hover:text-green-600 px-3 py-2 text-sm font-medium">
+              Admin
+            </Link>
           </div>
         </div>
       </div>
