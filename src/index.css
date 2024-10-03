@@ -7,7 +7,7 @@
 }
 
 @font-face {
-  font-family: 'BentonSans Regular';
+  font-family: 'BentonSans';
   src: url('/BentonSans Regular.otf') format('opentype');
   font-weight: normal;
   font-style: normal;
@@ -15,7 +15,7 @@
 }
 
 @font-face {
-  font-family: 'BentonSans Bold';
+  font-family: 'BentonSans';
   src: url('/BentonSans Bold.otf') format('opentype');
   font-weight: bold;
   font-style: normal;
@@ -23,7 +23,7 @@
 }
 
 @font-face {
-  font-family: 'BentonSans Medium';
+  font-family: 'BentonSans';
   src: url('/BentonSans Medium.otf') format('opentype');
   font-weight: 500;
   font-style: normal;
@@ -87,12 +87,13 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: 'BentonSans Regular', sans-serif;
+    font-family: 'BentonSans', sans-serif;
   }
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'BentonSans Bold', sans-serif;
+    font-family: 'BentonSans', sans-serif;
+    font-weight: bold;
   }
   button {
-    font-family: 'BentonSans Regular', sans-serif;
+    font-family: 'BentonSans', sans-serif;
   }
 }
