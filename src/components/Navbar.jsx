@@ -3,15 +3,20 @@ import { Link } from 'react-router-dom';
 
 const Navbar = () => {
   return (
-    <nav className="bg-green-800 text-white p-4">
-      <div className="container mx-auto flex justify-between items-center">
-        <Link to="/" className="flex items-center space-x-2">
-          <img src="/needa4th-logo.svg" alt="Needa4th Logo" className="h-10 w-10" />
-          <span className="text-2xl font-semibold">Needa4th</span>
-        </Link>
-        <div className="space-x-4">
-          <Link to="/schedule" className="hover:text-green-300">Schedule</Link>
-          <Link to="/add-tee-time" className="hover:text-green-300">Add Tee Time</Link>
+    <nav className="bg-white border-b border-gray-200">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+          <Link to="/" className="flex-shrink-0">
+            <img src="/needa4th-logo.svg" alt="Needa4th Logo" className="h-8 w-auto" />
+          </Link>
+          <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
+            <Link to="/schedule" className="text-green-800 hover:text-green-600 px-3 py-2 text-sm font-medium">
+              Schedule
+            </Link>
+            <Link to="/add-tee-time" className="text-green-800 hover:text-green-600 px-3 py-2 text-sm font-medium">
+              Add Tee Time
+            </Link>
+          </div>
         </div>
       </div>
     </nav>
