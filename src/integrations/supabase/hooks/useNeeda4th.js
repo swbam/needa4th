@@ -15,7 +15,9 @@ export const useTeeTimes = () => useQuery({
     queryKey: ['tee_times'],
     queryFn: async () => {
         try {
-            return await fromSupabase(supabase.from('tee_times').select('*').order('tee_date', { ascending: true }));
+            const data = await fromSupabase(supabase.from('tee_times').select('*').order('tee_date', { ascending: true }));
+            console.log('Fetched tee times:', data); // Log fetched data
+            return data;
         } catch (error) {
             console.error('Error fetching tee times:', error);
             toast.error("Failed to fetch tee times. Please try again later.");
