@@ -69,7 +69,7 @@ const Schedule = () => {
             <CardHeader>
               <CardTitle className="text-xl font-bold text-green-800">{teeTime.course}</CardTitle>
               <p className="text-sm text-gray-600">
-                {format(parseISO(teeTime.date), 'MMMM d, yyyy')} at {format(parseISO(teeTime.time), 'h:mm a')}
+                {format(parseISO(teeTime.tee_date), 'MMMM d, yyyy')} at {format(parseISO(teeTime.tee_time), 'h:mm a')}
               </p>
             </CardHeader>
             <CardContent>
@@ -89,7 +89,7 @@ const Schedule = () => {
                         <AlertDialogHeader>
                           <AlertDialogTitle>Confirm Tee Time</AlertDialogTitle>
                           <AlertDialogDescription>
-                            This is for {format(parseISO(teeTime.time), 'h:mm a')} on {format(parseISO(teeTime.date), 'MMMM d, yyyy')} at {teeTime.course}.
+                            This is for {format(parseISO(teeTime.tee_time), 'h:mm a')} on {format(parseISO(teeTime.tee_date), 'MMMM d, yyyy')} at {teeTime.course}.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <Select onValueChange={(value) => handleJoin(teeTime.id, value)}>

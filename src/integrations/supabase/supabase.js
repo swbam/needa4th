@@ -5,6 +5,7 @@ const supabaseKey = import.meta.env.VITE_SUPABASE_API_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
   console.error('Supabase URL or API key is missing. Please check your .env file.');
+  throw new Error('Supabase configuration is incomplete');
 }
 
 export const supabase = createClient(supabaseUrl, supabaseKey);
