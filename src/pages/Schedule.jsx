@@ -22,6 +22,8 @@ const Schedule = () => {
   const [selectedPlayer, setSelectedPlayer] = useState('');
   const [selectedTeeTime, setSelectedTeeTime] = useState(null);
 
+  console.log('Schedule component rendered. Data:', schedule);
+
   if (isLoading) return <div className="text-center mt-8">Loading...</div>;
   if (error) return <div className="text-center mt-8 text-red-500">Error loading schedule: {error.message}</div>;
 
