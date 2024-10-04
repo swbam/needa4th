@@ -22,8 +22,18 @@ export const SupabaseAuthProvider = ({ children }) => {
     };
   }, []);
 
+  const signIn = async (email, password) => {
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    return { error };
+  };
+
+  const signOut = async () => {
+    const { error } = await supabase.auth.signOut();
+    return { error };
+  };
+
   return (
-    <AuthContext.Provider value={{ user, supabase }}>
+    <AuthContext.Provider value={{ user, signIn, signOut, supabase }}>
       {children}
     </AuthContext.Provider>
   );
