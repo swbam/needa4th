@@ -1,13 +1,45 @@
--- Insert sample tee times
-INSERT INTO public.tee_times (tee_date, tee_time, course, slot, players, walk_ride, organizer, team1, team2)
-VALUES
-  ('2024-04-01', '07:00:00', 'Pinehurst No. 2', 1, ARRAY['Parker Smith', 'Dominic Nanni', 'Connor Stanley', 'Jesus Rios'], 'Walk', 'Parker Smith', ARRAY['Parker Smith', 'Dominic Nanni'], ARRAY['Connor Stanley', 'Jesus Rios']),
-  ('2024-04-01', '07:10:00', 'Pinehurst No. 2', 2, ARRAY['Derek Kozakiewicz', 'Jackson Smith', 'Bob Murray', 'Mike Brooks'], 'Walk', 'Derek Kozakiewicz', ARRAY['Derek Kozakiewicz', 'Jackson Smith'], ARRAY['Bob Murray', 'Mike Brooks']),
-  ('2024-04-01', '07:20:00', 'Pinehurst No. 2', 3, ARRAY['Andrew Rocco', 'Heath Mansfield', 'Lane Hostettler', 'Josh Alcala'], 'Walk', 'Andrew Rocco', ARRAY['Andrew Rocco', 'Heath Mansfield'], ARRAY['Lane Hostettler', 'Josh Alcala']),
-  ('2024-04-02', '08:00:00', 'Pinehurst No. 4', 1, ARRAY['Richard Caruso', 'Martin Clayton'], 'Ride', 'Richard Caruso', NULL, NULL),
-  ('2024-04-02', '08:10:00', 'Pinehurst No. 4', 2, ARRAY['Salvador Guzman', 'Jason Story'], 'Ride', 'Salvador Guzman', NULL, NULL),
-  ('2024-04-03', '09:00:00', 'Pinehurst No. 8', 1, ARRAY['Nathan Bateman'], 'Walk', 'Nathan Bateman', NULL, NULL);
+-- Create courses table
+CREATE TABLE public.courses (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    name TEXT NOT NULL,
+    location TEXT,
+    holes INTEGER,
+    par INTEGER,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
+);
+
+-- Create bookings table
+CREATE TABLE public.bookings (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    user_id UUID REFERENCES public.users(id),
+    tee_time_id UUID REFERENCES public.tee_times(id),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
+);
+
+-- Add some sample data to courses
+INSERT INTO public.courses (name, location, holes, par)
+VALUES 
+('Pinehurst No. 2', 'Pinehurst, NC', 18, 72),
+('Pinehurst No. 4', 'Pinehurst, NC', 18, 72),
+('Pinehurst No. 8', 'Pinehurst, NC', 18, 72);
 
 -- Ensure proper permissions
-GRANT ALL ON public.tee_times TO authenticated;
-GRANT USAGE, SELECT ON SEQUENCE public.tee_times_id_seq TO authenticated;
+GRANT ALL ON public.courses TO authenticated;
+GRANT USAGE, SELECT ON SEQUENCE public.courses_id_seq TO authenticated;
+GRANT ALL ON public.bookings TO authenticated;
+GRANT USAGE, SELECT ON SEQUENCE public.bookings_id_seq TO authenticated;
+
+-- Add a course_id foreign key to tee_times table
+ALTER TABLE public.tee_times
+ADD COLUMN course_id UUID REFERENCES public.courses(id);
+
+-- Update existing tee_times with course_id (assuming course names match)
+UPDATE public.tee_times
+SET course_id = (SELECT id FROM public.courses WHERE name = tee_times.course)
+WHERE course IS NOT NULL;
+
+-- You may want to make course_id NOT NULL after updating existing records
+-- ALTER TABLE public.tee_times ALTER COLUMN course_id SET NOT NULL;
+
+-- Consider dropping the 'course' column from tee_times if you no longer need it
+-- ALTER TABLE public.tee_times DROP COLUMN course;
