@@ -1,7 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import Navbar from './components/Navbar';
 import BottomNav from './components/BottomNav';
 import Schedule from './pages/Schedule';
@@ -37,7 +36,6 @@ const App = () => {
         </div>
       </Router>
       <Toaster />
-      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
 };
