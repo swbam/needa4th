@@ -4,12 +4,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Navbar from './components/Navbar';
 import BottomNav from './components/BottomNav';
 import Schedule from './pages/Schedule';
-import AddTeeTime from './pages/AddTeeTime';
+import PastGames from './pages/PastGames';
 import AddCourse from './pages/AddCourse';
-import Pricing from './pages/Pricing';
-import Settings from './pages/Settings';
-import AdminDashboard from './pages/AdminDashboard';
-import LoginPage from './pages/LoginPage';
+import Profile from './pages/Profile';
 import { Toaster } from "@/components/ui/sonner";
 
 const queryClient = new QueryClient();
@@ -24,12 +21,9 @@ const App = () => {
             <Routes>
               <Route path="/" element={<Navigate to="/schedule" replace />} />
               <Route path="/schedule" element={<Schedule />} />
-              <Route path="/add-tee-time" element={<AddTeeTime />} />
+              <Route path="/past" element={<PastGames />} />
               <Route path="/add-course" element={<AddCourse />} />
-              <Route path="/pricing" element={<Pricing />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/admin" element={<AdminDashboard />} />
-              <Route path="/login" element={<LoginPage />} />
+              <Route path="/profile" element={<Profile />} />
             </Routes>
           </main>
           <BottomNav />
