@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
@@ -21,7 +21,11 @@ const Schedule = () => {
   const [selectedPlayer, setSelectedPlayer] = useState('');
   const [selectedTeeTime, setSelectedTeeTime] = useState(null);
 
-  console.log('Schedule component rendered. Data:', schedule);
+  useEffect(() => {
+    console.log('Schedule component rendered. Data:', schedule);
+    console.log('Is loading:', isLoading);
+    console.log('Error:', error);
+  }, [schedule, isLoading, error]);
 
   if (isLoading) return <div className="text-center mt-8">Loading...</div>;
   if (error) return <div className="text-center mt-8 text-red-500">Error loading schedule: {error.message}</div>;
