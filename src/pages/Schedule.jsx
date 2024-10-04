@@ -29,6 +29,7 @@ const Schedule = () => {
 
   if (isLoading) return <div className="text-center mt-8">Loading...</div>;
   if (error) return <div className="text-center mt-8 text-red-500">Error loading schedule: {error.message}</div>;
+  if (!schedule || schedule.length === 0) return <div className="text-center mt-8">No tee times available.</div>;
 
   const handleJoin = (teeTime) => {
     setSelectedTeeTime(teeTime);
@@ -37,7 +38,7 @@ const Schedule = () => {
   const handleConfirm = () => {
     if (!selectedPlayer || !selectedTeeTime) return;
 
-    const updatedPlayers = [...selectedTeeTime.players, selectedPlayer].filter(Boolean);
+    const updatedPlayers = [...(selectedTeeTime.players || []), selectedPlayer];
     
     updateTeeMutation.mutate(
       { 
@@ -57,77 +58,73 @@ const Schedule = () => {
     );
   };
 
-  const sortedSchedule = schedule?.sort((a, b) => {
+  const sortedSchedule = schedule.sort((a, b) => {
     const dateA = parseISO(`${a.tee_date}T${a.tee_time}`);
     const dateB = parseISO(`${b.tee_date}T${b.tee_time}`);
     return dateA - dateB;
   });
 
   return (
-    <div className="container mx-auto px-4 py-8 pb-24"> {/* Increased bottom padding */}
+    <div className="container mx-auto px-4 py-8 pb-24">
       <h1 className="text-3xl font-bold text-green-800 mb-6">Tee Times</h1>
-      {sortedSchedule && sortedSchedule.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {sortedSchedule.map((teeTime) => {
-            const teeDateTime = parseISO(`${teeTime.tee_date}T${teeTime.tee_time}`);
-            const isPastTeeTime = isPast(teeDateTime);
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {sortedSchedule.map((teeTime) => {
+          const teeDateTime = parseISO(`${teeTime.tee_date}T${teeTime.tee_time}`);
+          const isPastTeeTime = isPast(teeDateTime);
 
-            return (
-              <Card key={teeTime.id} className={`bg-white shadow-lg ${isPastTeeTime ? 'opacity-60' : ''}`}>
-                <CardHeader>
-                  <CardTitle className="text-xl font-bold text-green-800">{teeTime.location}</CardTitle>
-                  <p className="text-sm text-gray-600">
-                    {format(teeDateTime, 'MMMM d, yyyy h:mm a')}
-                    {isPastTeeTime && ' (Past)'}
-                  </p>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-2">
-                    {teeTime.players && teeTime.players.map((player, index) => (
-                      <li key={index} className="flex justify-between items-center">
-                        <span>{player}</span>
-                      </li>
-                    ))}
-                    {!isPastTeeTime && (!teeTime.players || teeTime.players.length < 4) && (
-                      <li>
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button onClick={() => handleJoin(teeTime)} variant="outline" className="w-full bg-black text-white hover:bg-gray-800">Join</Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>Confirm Tee Time</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                This is for {format(teeDateTime, 'h:mm a')} on {format(teeDateTime, 'MMMM d, yyyy')} at {teeTime.location}.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <Select onValueChange={setSelectedPlayer}>
-                              <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Select your name" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {players.map((player) => (
-                                  <SelectItem key={player} value={player}>{player}</SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel onClick={() => setSelectedPlayer('')}>Cancel</AlertDialogCancel>
-                              <AlertDialogAction onClick={handleConfirm} disabled={!selectedPlayer}>Confirm</AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      </li>
-                    )}
-                  </ul>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
-      ) : (
-        <div className="text-center mt-8">No tee times available.</div>
-      )}
+          return (
+            <Card key={teeTime.id} className={`bg-white shadow-lg ${isPastTeeTime ? 'opacity-60' : ''}`}>
+              <CardHeader>
+                <CardTitle className="text-xl font-bold text-green-800">{teeTime.location}</CardTitle>
+                <p className="text-sm text-gray-600">
+                  {format(teeDateTime, 'MMMM d, yyyy h:mm a')}
+                  {isPastTeeTime && ' (Past)'}
+                </p>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2">
+                  {teeTime.players && teeTime.players.map((player, index) => (
+                    <li key={index} className="flex justify-between items-center">
+                      <span>{player}</span>
+                    </li>
+                  ))}
+                  {!isPastTeeTime && (!teeTime.players || teeTime.players.length < 4) && (
+                    <li>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button onClick={() => handleJoin(teeTime)} variant="outline" className="w-full bg-black text-white hover:bg-gray-800">Join</Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Confirm Tee Time</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This is for {format(teeDateTime, 'h:mm a')} on {format(teeDateTime, 'MMMM d, yyyy')} at {teeTime.location}.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <Select onValueChange={setSelectedPlayer}>
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select your name" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {players.map((player) => (
+                                <SelectItem key={player} value={player}>{player}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel onClick={() => setSelectedPlayer('')}>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={handleConfirm} disabled={!selectedPlayer}>Confirm</AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </li>
+                  )}
+                </ul>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
     </div>
   );
 };
