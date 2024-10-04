@@ -4,7 +4,7 @@ import App from './App.jsx';
 import './index.css';
 import { initializeDatabase } from './utils/initializeDatabase';
 
-// Initialize the database
+// Initialize the database (Google Sheets connection)
 initializeDatabase().then(() => {
   ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>
