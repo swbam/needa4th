@@ -1,24 +1,12 @@
--- Ensure the tee_times table has all necessary columns
-ALTER TABLE public.tee_times
-ADD COLUMN IF NOT EXISTS id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-ADD COLUMN IF NOT EXISTS tee_date DATE,
-ADD COLUMN IF NOT EXISTS tee_time TIME,
-ADD COLUMN IF NOT EXISTS course TEXT,
-ADD COLUMN IF NOT EXISTS slot INTEGER,
-ADD COLUMN IF NOT EXISTS players TEXT[],
-ADD COLUMN IF NOT EXISTS walk_ride TEXT,
-ADD COLUMN IF NOT EXISTS organizer TEXT,
-ADD COLUMN IF NOT EXISTS team1 TEXT[],
-ADD COLUMN IF NOT EXISTS team2 TEXT[];
-
--- Update existing rows if necessary (example for date and time)
-UPDATE public.tee_times
-SET tee_date = date::DATE,
-    tee_time = time::TIME
-WHERE tee_date IS NULL AND date IS NOT NULL;
-
--- Drop columns that are no longer needed (if any)
--- ALTER TABLE public.tee_times DROP COLUMN IF EXISTS old_column_name;
+-- Insert sample tee times
+INSERT INTO public.tee_times (tee_date, tee_time, course, slot, players, walk_ride, organizer, team1, team2)
+VALUES
+  ('2024-04-01', '07:00:00', 'Pinehurst No. 2', 1, ARRAY['Parker Smith', 'Dominic Nanni', 'Connor Stanley', 'Jesus Rios'], 'Walk', 'Parker Smith', ARRAY['Parker Smith', 'Dominic Nanni'], ARRAY['Connor Stanley', 'Jesus Rios']),
+  ('2024-04-01', '07:10:00', 'Pinehurst No. 2', 2, ARRAY['Derek Kozakiewicz', 'Jackson Smith', 'Bob Murray', 'Mike Brooks'], 'Walk', 'Derek Kozakiewicz', ARRAY['Derek Kozakiewicz', 'Jackson Smith'], ARRAY['Bob Murray', 'Mike Brooks']),
+  ('2024-04-01', '07:20:00', 'Pinehurst No. 2', 3, ARRAY['Andrew Rocco', 'Heath Mansfield', 'Lane Hostettler', 'Josh Alcala'], 'Walk', 'Andrew Rocco', ARRAY['Andrew Rocco', 'Heath Mansfield'], ARRAY['Lane Hostettler', 'Josh Alcala']),
+  ('2024-04-02', '08:00:00', 'Pinehurst No. 4', 1, ARRAY['Richard Caruso', 'Martin Clayton'], 'Ride', 'Richard Caruso', NULL, NULL),
+  ('2024-04-02', '08:10:00', 'Pinehurst No. 4', 2, ARRAY['Salvador Guzman', 'Jason Story'], 'Ride', 'Salvador Guzman', NULL, NULL),
+  ('2024-04-03', '09:00:00', 'Pinehurst No. 8', 1, ARRAY['Nathan Bateman'], 'Walk', 'Nathan Bateman', NULL, NULL);
 
 -- Ensure proper permissions
 GRANT ALL ON public.tee_times TO authenticated;
