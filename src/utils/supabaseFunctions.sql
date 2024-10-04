@@ -1,4 +1,38 @@
--- ... keep existing code (functions for creating tee_times and users tables)
+-- Function to ensure tee_times table exists with all necessary columns
+CREATE OR REPLACE FUNCTION public.create_tee_times_table()
+RETURNS void AS $$
+BEGIN
+  CREATE TABLE IF NOT EXISTS public.tee_times (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    tee_date DATE,
+    tee_time TIME,
+    location TEXT,
+    players TEXT[],
+    walk_ride TEXT,
+    organizer TEXT,
+    attendees TEXT[],
+    team1 TEXT[],
+    team2 TEXT[]
+  );
+
+  BEGIN
+    ALTER TABLE public.tee_times ADD COLUMN IF NOT EXISTS tee_date DATE;
+    ALTER TABLE public.tee_times ADD COLUMN IF NOT EXISTS tee_time TIME;
+    ALTER TABLE public.tee_times ADD COLUMN IF NOT EXISTS location TEXT;
+    ALTER TABLE public.tee_times ADD COLUMN IF NOT EXISTS players TEXT[];
+    ALTER TABLE public.tee_times ADD COLUMN IF NOT EXISTS walk_ride TEXT;
+    ALTER TABLE public.tee_times ADD COLUMN IF NOT EXISTS organizer TEXT;
+    ALTER TABLE public.tee_times ADD COLUMN IF NOT EXISTS attendees TEXT[];
+    ALTER TABLE public.tee_times ADD COLUMN IF NOT EXISTS team1 TEXT[];
+    ALTER TABLE public.tee_times ADD COLUMN IF NOT EXISTS team2 TEXT[];
+  EXCEPTION
+    WHEN duplicate_column THEN
+      -- Do nothing, column already exists
+  END;
+END;
+$$ LANGUAGE plpgsql;
+
+-- ... keep existing code (functions for creating users table)
 
 -- Function to import data from the image
 CREATE OR REPLACE FUNCTION public.import_image_data()
@@ -44,6 +78,20 @@ BEGIN
     ('Alex York', 'alex@example.com', 'Pinehurst No. 8'),
     ('John Shrader', 'john@example.com', 'Tobacco Road')
   ON CONFLICT (email) DO NOTHING;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Function to update teams for a tee time
+CREATE OR REPLACE FUNCTION public.update_tee_time_teams(
+  p_tee_time_id UUID,
+  p_team1 TEXT[],
+  p_team2 TEXT[]
+)
+RETURNS void AS $$
+BEGIN
+  UPDATE public.tee_times
+  SET team1 = p_team1, team2 = p_team2
+  WHERE id = p_tee_time_id;
 END;
 $$ LANGUAGE plpgsql;
 
