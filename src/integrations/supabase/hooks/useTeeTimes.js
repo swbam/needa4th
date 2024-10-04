@@ -24,6 +24,8 @@ export const useTeeTimes = () => useQuery({
             
             if (!data || data.length === 0) {
                 console.log('No tee times found in the database.');
+            } else {
+                console.log('Fetched tee times:', data);
             }
             
             return data;
