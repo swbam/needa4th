@@ -9,12 +9,13 @@ if (!supabaseUrl || !supabaseKey) {
 
 export const supabase = createClient(supabaseUrl, supabaseKey);
 
-// Test the connection
+// Test the connection and log the first tee time
 supabase.from('tee_times').select('*').limit(1)
   .then(({ data, error }) => {
     if (error) {
       console.error('Error connecting to Supabase:', error);
     } else {
       console.log('Successfully connected to Supabase');
+      console.log('First tee time:', data[0]);
     }
   });
