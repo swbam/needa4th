@@ -16,7 +16,10 @@ export const useTeeTimes = () => useQuery({
     queryFn: async () => {
         console.log('Fetching tee times...');
         try {
-            const data = await fromSupabase(supabase.from('tee_times').select('*').order('tee_date', { ascending: true }));
+            const data = await fromSupabase(supabase
+                .from('tee_times')
+                .select('*')
+                .order('tee_date', { ascending: true }));
             console.log('Fetched tee times:', data);
             return data;
         } catch (error) {
