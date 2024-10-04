@@ -9,7 +9,7 @@ const Navbar = () => {
           <img 
             src="/needa4th-logo-white.png" 
             alt="Needa4th Logo" 
-            className="h-[50px] w-auto"
+            className="h-[40px] w-auto"
           />
         </Link>
       </div>
