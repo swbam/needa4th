@@ -15,6 +15,7 @@ export const useTeeTimes = () => useQuery({
     queryKey: ['tee_times'],
     queryFn: async () => {
         try {
+            console.log('Fetching tee times...');
             const query = supabase
                 .from('tee_times')
                 .select('*')

@@ -11,3 +11,12 @@ if (!supabaseUrl || !supabaseKey) {
 export const supabase = createClient(supabaseUrl, supabaseKey);
 
 console.log('Supabase client initialized with URL:', supabaseUrl);
+
+// Test the connection
+supabase.from('tee_times').select('count', { count: 'exact' }).then(({ count, error }) => {
+  if (error) {
+    console.error('Error connecting to Supabase:', error);
+  } else {
+    console.log('Successfully connected to Supabase. Total tee times:', count);
+  }
+});

@@ -6,7 +6,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import SetTeamsModal from '../components/SetTeamsModal';
 import { toast } from "sonner";
-import { format, parseISO } from 'date-fns';
+import { format, parseISO, isBefore, startOfToday } from 'date-fns';
 
 const players = [
   'Alex York', 'Andrew Rocco', 'Bob Murray', 'Chris Baker', 'Connor Stanley', 
@@ -39,10 +39,12 @@ const Schedule = () => {
   }
 
   if (error) {
+    console.error('Error in Schedule component:', error);
     return <div className="text-center mt-8 text-red-500">Error loading schedule. Please try again later.</div>;
   }
 
   if (!schedule || schedule.length === 0) {
+    console.log('No tee times available in Schedule component');
     return (
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold text-green-800 mb-6">Tee Times</h1>
@@ -50,6 +52,8 @@ const Schedule = () => {
       </div>
     );
   }
+
+  console.log('Rendering tee times:', schedule);
 
   return (
     <div className="container mx-auto px-4 py-8">
