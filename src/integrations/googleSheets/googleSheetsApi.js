@@ -1,7 +1,7 @@
 import { GoogleOAuthProvider, useGoogleLogin } from '@react-oauth/google';
 
-const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID'; // Replace with your actual Google Client ID
-const SHEET_ID = 'YOUR_GOOGLE_SHEET_ID'; // Replace with your actual Google Sheet ID
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID; // Use environment variable
+const SHEET_ID = import.meta.env.VITE_GOOGLE_SHEET_ID; // Use environment variable
 
 export const GoogleSheetsProvider = ({ children }) => (
   <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
@@ -16,7 +16,7 @@ export const useGoogleSheetsAuth = () => {
       // You might want to store the access token in state or context
     },
     onError: (error) => console.error('Google login failed:', error),
-    scope: 'https://www.googleapis.com/auth/spreadsheets.readonly',
+    scope: 'https://www.googleapis.com/auth/spreadsheets',
   });
 };
 
@@ -33,4 +33,32 @@ export const fetchSheetData = async (accessToken) => {
 
   const data = await response.json();
   return data.values;
+};
+
+export const createSheet = async (accessToken, sheetTitle) => {
+  const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}:batchUpdate`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      requests: [
+        {
+          addSheet: {
+            properties: {
+              title: sheetTitle,
+            },
+          },
+        },
+      ],
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to create new sheet');
+  }
+
+  const data = await response.json();
+  return data;
 };
