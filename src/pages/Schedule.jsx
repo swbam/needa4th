@@ -20,7 +20,9 @@ const Schedule = () => {
           return (
             <Card key={teeTime.id} className="bg-white shadow-lg">
               <CardHeader>
-                <CardTitle className="text-xl font-bold text-green-800">{teeTime.course.name}</CardTitle>
+                <CardTitle className="text-xl font-bold text-green-800">
+                  {teeTime.course?.name || 'Unknown Course'}
+                </CardTitle>
                 <p className="text-sm text-gray-600">
                   {format(teeDateTime, 'MMMM d, yyyy h:mm a')}
                 </p>

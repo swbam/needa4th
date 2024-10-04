@@ -26,6 +26,8 @@ export const useTeeTimes = () => useQuery({
                 .order('tee_time', { ascending: false })
                 .limit(5);
             
+            console.log('Supabase query:', query.toSQL());
+            
             const teeTimes = await fromSupabase(query);
             
             console.log('Raw tee times data:', teeTimes);
