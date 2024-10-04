@@ -60,11 +60,11 @@ const Schedule = () => {
   const sortedSchedule = schedule?.sort((a, b) => {
     const dateA = parseISO(`${a.tee_date}T${a.tee_time}`);
     const dateB = parseISO(`${b.tee_date}T${b.tee_time}`);
-    return dateB - dateA;
+    return dateA - dateB;
   });
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 pb-20">
       <h1 className="text-3xl font-bold text-green-800 mb-6">Tee Times</h1>
       {sortedSchedule && sortedSchedule.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
