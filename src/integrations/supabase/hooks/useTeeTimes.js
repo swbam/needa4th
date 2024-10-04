@@ -15,14 +15,13 @@ export const useTeeTimes = () => useQuery({
     queryKey: ['tee_times'],
     queryFn: async () => {
         try {
-            console.log('Fetching last 5 tee times...');
+            console.log('Fetching all tee times...');
             const teeTimes = await fromSupabase(
                 supabase
                     .from('tee_times')
                     .select('*')
                     .order('tee_date', { ascending: false })
                     .order('tee_time', { ascending: false })
-                    .limit(5)
             );
             
             console.log('Raw tee times data:', teeTimes);
@@ -98,4 +97,3 @@ export const useDeleteTeeTime = () => {
         },
     });
 };
-
