@@ -6,7 +6,7 @@ const Navbar = () => {
     <nav className="bg-[#006747] py-2">
       <div className="container mx-auto flex justify-center items-center">
         <Link to="/" className="flex items-center">
-          <img src="/2-1.png" alt="Needa4th Logo" className="h-12 mr-2" />
+          <img src="/needa4th-logo-white.png" alt="Needa4th Logo" className="h-12 mr-2" />
           <span className="text-2xl font-bold text-white" style={{ fontFamily: 'Bellenord, sans-serif' }}>
             Needa4th
           </span>
