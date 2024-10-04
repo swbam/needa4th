@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import SetTeamsModal from '../components/SetTeamsModal';
+import { toast } from "sonner";
 
 const players = [
   'Alex York', 'Andrew Rocco', 'Bob Murray', 'Chris Baker', 'Connor Stanley', 
@@ -23,7 +24,7 @@ const Schedule = () => {
 
   const handleJoin = (teeTimeId, playerName) => {
     const teeTime = schedule.find(tt => tt.id === teeTimeId);
-    const updatedPlayers = [...teeTime.players, playerName];
+    const updatedPlayers = [...(teeTime.players || []), playerName];
     updateTeeMutation.mutate({ id: teeTimeId, players: updatedPlayers });
   };
 
@@ -33,13 +34,16 @@ const Schedule = () => {
   };
 
   if (isLoading) return <div className="text-center mt-8">Loading...</div>;
-  if (error) return <div className="text-center mt-8 text-red-500">Error loading schedule: {error.message}</div>;
+  if (error) {
+    toast.error("Failed to load tee times. Please try again later.");
+    return <div className="text-center mt-8 text-red-500">Error loading schedule. Please try again later.</div>;
+  }
 
   if (!schedule || schedule.length === 0) {
     return (
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold text-green-800 mb-6">Tee Times</h1>
-        <p className="text-center">No tee times available. Please add some tee times or check if the tee_times table exists in your Supabase project.</p>
+        <p className="text-center">No tee times available. Please add some tee times or check back later.</p>
       </div>
     );
   }
