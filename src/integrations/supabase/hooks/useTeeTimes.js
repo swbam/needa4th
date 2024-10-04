@@ -14,17 +14,13 @@ const fromSupabase = async (query) => {
 export const useTeeTimes = () => useQuery({
     queryKey: ['tee_times'],
     queryFn: async () => {
-        console.log('Fetching tee times...');
         try {
             const query = supabase
                 .from('tee_times')
                 .select('*')
-                .order('tee_date', { ascending: true });
-            
-            console.log('Supabase query:', query.toSQL());
+                .order('date', { ascending: true });
             
             const data = await fromSupabase(query);
-            console.log('Fetched tee times:', data);
             
             if (!data || data.length === 0) {
                 console.log('No tee times found in the database.');
@@ -41,17 +37,16 @@ export const useTeeTimes = () => useQuery({
     retryDelay: 1000,
 });
 
-export const useTeeTime = (id) => useQuery({
-    queryKey: ['tee_times', id],
-    queryFn: () => fromSupabase(supabase.from('tee_times').select('*').eq('id', id).single()),
-});
-
 export const useAddTeeTime = () => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: (newTeeTime) => fromSupabase(supabase.from('tee_times').insert([newTeeTime])),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['tee_times'] });
+            toast.success("Tee time added successfully!");
+        },
+        onError: (error) => {
+            toast.error(`Failed to add tee time: ${error.message}`);
         },
     });
 };
@@ -62,6 +57,10 @@ export const useUpdateTeeTime = () => {
         mutationFn: ({ id, ...updateData }) => fromSupabase(supabase.from('tee_times').update(updateData).eq('id', id)),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['tee_times'] });
+            toast.success("Tee time updated successfully!");
+        },
+        onError: (error) => {
+            toast.error(`Failed to update tee time: ${error.message}`);
         },
     });
 };
@@ -72,6 +71,10 @@ export const useDeleteTeeTime = () => {
         mutationFn: (id) => fromSupabase(supabase.from('tee_times').delete().eq('id', id)),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['tee_times'] });
+            toast.success("Tee time deleted successfully!");
+        },
+        onError: (error) => {
+            toast.error(`Failed to delete tee time: ${error.message}`);
         },
     });
 };

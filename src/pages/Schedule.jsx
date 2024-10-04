@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTeeTimes, useUpdateTeeTime } from '@/integrations/supabase/hooks/useTeeTimes';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,18 +17,11 @@ const players = [
 ].sort();
 
 const Schedule = () => {
-  const [isSetTeamsModalOpen, setIsSetTeamsModalOpen] = React.useState(false);
-  const [selectedTeeTime, setSelectedTeeTime] = React.useState(null);
+  const [isSetTeamsModalOpen, setIsSetTeamsModalOpen] = useState(false);
+  const [selectedTeeTime, setSelectedTeeTime] = useState(null);
 
   const { data: schedule, isLoading, error } = useTeeTimes();
   const updateTeeMutation = useUpdateTeeTime();
-
-  React.useEffect(() => {
-    if (error) {
-      console.error('Error in useTeeTimes hook:', error);
-      toast.error("Failed to fetch tee times. Please try again later.");
-    }
-  }, [error]);
 
   const handleJoin = (teeTimeId, playerName) => {
     const teeTime = schedule.find(tt => tt.id === teeTimeId);
@@ -67,7 +60,7 @@ const Schedule = () => {
             <CardHeader>
               <CardTitle className="text-xl font-bold text-green-800">{teeTime.course}</CardTitle>
               <p className="text-sm text-gray-600">
-                {format(parseISO(teeTime.tee_date), 'M/d/yyyy, h:mm:ss a')}
+                {format(parseISO(teeTime.date), 'M/d/yyyy, h:mm a')}
               </p>
             </CardHeader>
             <CardContent>
@@ -85,7 +78,7 @@ const Schedule = () => {
                         <AlertDialogHeader>
                           <AlertDialogTitle>Confirm Tee Time</AlertDialogTitle>
                           <AlertDialogDescription>
-                            This is for {format(parseISO(teeTime.tee_time), 'h:mm a')} on {format(parseISO(teeTime.tee_date), 'MMMM d, yyyy')} at {teeTime.course}.
+                            This is for {format(parseISO(teeTime.date), 'h:mm a')} on {format(parseISO(teeTime.date), 'MMMM d, yyyy')} at {teeTime.course}.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <Select onValueChange={(value) => handleJoin(teeTime.id, value)}>
