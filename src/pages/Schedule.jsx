@@ -6,6 +6,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import SetTeamsModal from '../components/SetTeamsModal';
 import { toast } from "sonner";
+import { format, parseISO } from 'date-fns';
 
 const players = [
   'Alex York', 'Andrew Rocco', 'Bob Murray', 'Chris Baker', 'Connor Stanley', 
@@ -66,8 +67,10 @@ const Schedule = () => {
         {schedule.map((teeTime) => (
           <Card key={teeTime.id} className="bg-white shadow-lg">
             <CardHeader>
-              <CardTitle className="text-xl font-bold text-green-800">{teeTime.location}</CardTitle>
-              <p className="text-sm text-gray-600">{new Date(teeTime.tee_date + 'T' + teeTime.tee_time).toLocaleString()}</p>
+              <CardTitle className="text-xl font-bold text-green-800">{teeTime.course}</CardTitle>
+              <p className="text-sm text-gray-600">
+                {format(parseISO(teeTime.date), 'MMMM d, yyyy')} at {format(parseISO(teeTime.time), 'h:mm a')}
+              </p>
             </CardHeader>
             <CardContent>
               <ul className="space-y-2">
@@ -86,7 +89,7 @@ const Schedule = () => {
                         <AlertDialogHeader>
                           <AlertDialogTitle>Confirm Tee Time</AlertDialogTitle>
                           <AlertDialogDescription>
-                            This is for {teeTime.tee_time} on {new Date(teeTime.tee_date).toLocaleDateString()} at {teeTime.location}.
+                            This is for {format(parseISO(teeTime.time), 'h:mm a')} on {format(parseISO(teeTime.date), 'MMMM d, yyyy')} at {teeTime.course}.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <Select onValueChange={(value) => handleJoin(teeTime.id, value)}>
