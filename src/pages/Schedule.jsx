@@ -22,7 +22,7 @@ const Schedule = () => {
   const [selectedTeeTime, setSelectedTeeTime] = useState(null);
 
   if (isLoading) return <div className="text-center mt-8">Loading...</div>;
-  if (error) return <div className="text-center mt-8 text-red-500">Error loading schedule</div>;
+  if (error) return <div className="text-center mt-8 text-red-500">Error loading schedule: {error.message}</div>;
 
   const handleJoin = (teeTime) => {
     setSelectedTeeTime(teeTime);
@@ -54,56 +54,60 @@ const Schedule = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold text-green-800 mb-6">Tee Times</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {schedule.map((teeTime) => (
-          <Card key={teeTime.id} className="bg-white shadow-lg">
-            <CardHeader>
-              <CardTitle className="text-xl font-bold text-green-800">{teeTime.location}</CardTitle>
-              <p className="text-sm text-gray-600">{new Date(teeTime.tee_date + 'T' + teeTime.tee_time).toLocaleString()}</p>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-2">
-                {teeTime.players.map((player, index) => (
-                  <li key={index} className="flex justify-between items-center">
-                    <span>{player}</span>
-                  </li>
-                ))}
-                {teeTime.players.length < 4 && (
-                  <li>
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button onClick={() => handleJoin(teeTime)} variant="outline" className="w-full bg-black text-white hover:bg-gray-800">Join</Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Confirm Tee Time</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            This is for {teeTime.tee_time} on {new Date(teeTime.tee_date).toLocaleDateString()} at {teeTime.location}.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <Select onValueChange={setSelectedPlayer}>
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select your name" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {players.map((player) => (
-                              <SelectItem key={player} value={player}>{player}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel onClick={() => setSelectedPlayer('')}>Cancel</AlertDialogCancel>
-                          <AlertDialogAction onClick={handleConfirm} disabled={!selectedPlayer}>Confirm</AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  </li>
-                )}
-              </ul>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      {schedule && schedule.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {schedule.map((teeTime) => (
+            <Card key={teeTime.id} className="bg-white shadow-lg">
+              <CardHeader>
+                <CardTitle className="text-xl font-bold text-green-800">{teeTime.location}</CardTitle>
+                <p className="text-sm text-gray-600">{new Date(teeTime.tee_date + 'T' + teeTime.tee_time).toLocaleString()}</p>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2">
+                  {teeTime.players && teeTime.players.map((player, index) => (
+                    <li key={index} className="flex justify-between items-center">
+                      <span>{player}</span>
+                    </li>
+                  ))}
+                  {(!teeTime.players || teeTime.players.length < 4) && (
+                    <li>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button onClick={() => handleJoin(teeTime)} variant="outline" className="w-full bg-black text-white hover:bg-gray-800">Join</Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Confirm Tee Time</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This is for {teeTime.tee_time} on {new Date(teeTime.tee_date).toLocaleDateString()} at {teeTime.location}.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <Select onValueChange={setSelectedPlayer}>
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select your name" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {players.map((player) => (
+                                <SelectItem key={player} value={player}>{player}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel onClick={() => setSelectedPlayer('')}>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={handleConfirm} disabled={!selectedPlayer}>Confirm</AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </li>
+                  )}
+                </ul>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <div className="text-center mt-8">No tee times available.</div>
+      )}
     </div>
   );
 };
