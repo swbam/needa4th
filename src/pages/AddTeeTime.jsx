@@ -6,8 +6,6 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useAddTeeTime } from '@/integrations/supabase/hooks/useTeeTimes';
-import { format } from 'date-fns';
 
 const players = [
   'Parker Smith', 'Dominic Nanni', 'Connor Stanley', 'Jesus Rios', 'Derek Kozakiewicz',
@@ -15,38 +13,20 @@ const players = [
   'Lane Hostettler', 'Josh Alcala', 'Richard Caruso', 'Martin Clayton', 'Salvador Guzman',
   'Jason Story', 'Nathan Bateman', 'Seth Bambling', 'Josh Link', 'Chris Baker',
   'Kyle McFarland', 'Gilmore Connors', 'Alex York', 'Guest', 'John Shrader'
-].sort();
-
-const courses = [
-  'Pinehurst No. 2',
-  'Pinehurst No. 4',
-  'Pinehurst No. 8',
-  'Tobacco Road'
 ];
 
 const AddTeeTime = () => {
   const { control, handleSubmit, formState: { errors } } = useForm();
-  const addTeeMutation = useAddTeeTime();
+  const [courses, setCourses] = useState([]);
+
+  useEffect(() => {
+    const storedCourses = JSON.parse(localStorage.getItem('courses') || '[]');
+    setCourses(storedCourses);
+  }, []);
 
   const onSubmit = (data) => {
-    const newTeeTime = {
-      tee_date: data.date,
-      tee_time: data.time,
-      course: data.course,
-      slot: 1, // Default to 1 for now
-      players: [data.organizer],
-      walk_ride: data.walkRide,
-      organizer: data.organizer
-    };
-
-    addTeeMutation.mutate(newTeeTime, {
-      onSuccess: () => {
-        toast.success("Tee time added successfully!");
-      },
-      onError: (error) => {
-        toast.error(`Failed to add tee time: ${error.message}`);
-      }
-    });
+    console.log(data);
+    toast.success("Tee time added successfully!");
   };
 
   return (
@@ -68,19 +48,9 @@ const AddTeeTime = () => {
               {errors.date && <span className="text-red-500 text-sm">This field is required</span>}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="time">Time</Label>
+              <Label htmlFor="location">Location</Label>
               <Controller
-                name="time"
-                control={control}
-                rules={{ required: true }}
-                render={({ field }) => <Input type="time" id="time" {...field} className="w-full" />}
-              />
-              {errors.time && <span className="text-red-500 text-sm">This field is required</span>}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="course">Course</Label>
-              <Controller
-                name="course"
+                name="location"
                 control={control}
                 rules={{ required: true }}
                 render={({ field }) => (
@@ -90,13 +60,23 @@ const AddTeeTime = () => {
                     </SelectTrigger>
                     <SelectContent>
                       {courses.map((course) => (
-                        <SelectItem key={course} value={course}>{course}</SelectItem>
+                        <SelectItem key={course.id} value={course.name}>{course.name}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 )}
               />
-              {errors.course && <span className="text-red-500 text-sm">This field is required</span>}
+              {errors.location && <span className="text-red-500 text-sm">This field is required</span>}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="time">Time</Label>
+              <Controller
+                name="time"
+                control={control}
+                rules={{ required: true }}
+                render={({ field }) => <Input type="time" id="time" {...field} className="w-full" />}
+              />
+              {errors.time && <span className="text-red-500 text-sm">This field is required</span>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="organizer">Organizer</Label>
@@ -118,26 +98,6 @@ const AddTeeTime = () => {
                 )}
               />
               {errors.organizer && <span className="text-red-500 text-sm">This field is required</span>}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="walkRide">Walk/Ride</Label>
-              <Controller
-                name="walkRide"
-                control={control}
-                rules={{ required: true }}
-                render={({ field }) => (
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select walk or ride" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Walk">Walk</SelectItem>
-                      <SelectItem value="Ride">Ride</SelectItem>
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-              {errors.walkRide && <span className="text-red-500 text-sm">This field is required</span>}
             </div>
             <Button type="submit" className="w-full bg-green-800 hover:bg-green-700">Add Tee Time</Button>
           </form>

@@ -6,7 +6,7 @@ module.exports = {
     './components/**/*.{ts,tsx}',
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx,js,jsx}',
-  ],
+	],
   theme: {
     container: {
       center: true,
@@ -50,14 +50,6 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // Masters custom colors
-        masters: {
-          green: "#006747",
-          yellow: "#FFFF00",
-          white: "#FFFFFF",
-          black: "#000000",
-          gold: "#C19A6B",
-        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -77,10 +69,6 @@ module.exports = {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-      },
-      fontFamily: {
-        serif: ['Bellenord', 'serif'],
-        sans: ['Benton Sans Regular', 'sans-serif'],
       },
     },
   },

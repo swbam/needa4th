@@ -3,14 +3,10 @@ import { Link } from 'react-router-dom';
 
 const Navbar = () => {
   return (
-    <nav className="bg-masters-green h-[60px] flex items-center">
+    <nav className="bg-[#006747] py-2">
       <div className="container mx-auto flex justify-center items-center">
-        <Link to="/" className="text-white">
-          <img 
-            src="/needa4th-logo-white.png" 
-            alt="Needa4th Logo" 
-            className="h-[26px] w-auto" 
-          />
+        <Link to="/" className="text-2xl font-bold text-white" style={{ fontFamily: 'Bellenord, sans-serif' }}>
+          Needa4th
         </Link>
       </div>
     </nav>
