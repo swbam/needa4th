@@ -4,16 +4,14 @@ import { Link } from 'react-router-dom';
 const Navbar = () => {
   return (
     <nav className="bg-green-800 p-4">
-      <div className="container mx-auto flex justify-between items-center">
-        <Link to="/" className="text-white text-2xl font-bold">
-          <img src="/needa4th-logo-white.png" alt="Needa4th Logo" className="h-8" />
+      <div className="container mx-auto flex justify-center items-center">
+        <Link to="/" className="text-white">
+          <img 
+            src="/needa4th-logo-white.png" 
+            alt="Needa4th Logo" 
+            className="h-[60px] w-auto"
+          />
         </Link>
-        <div className="space-x-4">
-          <Link to="/schedule" className="text-white hover:text-green-200">Schedule</Link>
-          <Link to="/add-tee-time" className="text-white hover:text-green-200">Add Tee Time</Link>
-          <Link to="/pricing" className="text-white hover:text-green-200">Pricing</Link>
-          <Link to="/settings" className="text-white hover:text-green-200">Settings</Link>
-        </div>
       </div>
     </nav>
   );
