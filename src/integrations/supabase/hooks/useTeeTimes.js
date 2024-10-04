@@ -37,6 +37,8 @@ export const useTeeTimes = () => useQuery({
             throw error;
         }
     },
+    retry: 3,
+    retryDelay: 1000,
 });
 
 export const useTeeTime = (id) => useQuery({
