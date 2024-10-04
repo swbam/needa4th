@@ -1,12 +1,4 @@
 @font-face {
-  font-family: 'Bellenord';
-  src: url('/Bellenord.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
   font-family: 'BentonSans';
   src: url('/BentonSans Regular.otf') format('opentype');
   font-weight: normal;
@@ -80,7 +72,7 @@
     --ring: 142 70.6% 45.3%;
   }
 }
- 
+
 @layer base {
   * {
     @apply border-border;
@@ -99,5 +91,10 @@
 }
 
 .logo {
-  font-family: 'Bellenord', sans-serif;
+  background-image: url('/needa4th-logo-green.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 150px;
+  height: 50px;
 }
