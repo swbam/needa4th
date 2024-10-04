@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @font-face {
   font-family: 'Bellenord' , sans-serif !important;
   src: url('/Bellenord.ttf') format('truetype');
