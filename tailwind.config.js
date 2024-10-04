@@ -50,7 +50,7 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // Add Masters custom colors
+        // Masters custom colors
         masters: {
           green: "#006747",
           yellow: "#FFFF00",

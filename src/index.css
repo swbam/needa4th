@@ -77,6 +77,12 @@
   }
 }
 
+@layer utilities {
+  .text-masters-green {
+    color: theme('colors.masters.green');
+  }
+}
+
 .masters-logo {
   @apply bg-masters-green text-masters-white;
 }
