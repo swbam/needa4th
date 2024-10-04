@@ -46,7 +46,6 @@ const Schedule = () => {
 
   if (error) {
     console.error('Error loading schedule:', error);
-    toast.error("Failed to load tee times. Please try again later.");
     return <div className="text-center mt-8 text-red-500">Error loading schedule. Please try again later.</div>;
   }
 
