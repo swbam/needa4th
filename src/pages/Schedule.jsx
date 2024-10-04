@@ -24,6 +24,10 @@ const Schedule = () => {
 
   console.log('Schedule component rendered. Data:', schedule);
 
+  React.useEffect(() => {
+    console.log('Schedule useEffect - isLoading:', isLoading, 'error:', error, 'schedule:', schedule);
+  }, [isLoading, error, schedule]);
+
   const handleJoin = (teeTimeId, playerName) => {
     const teeTime = schedule.find(tt => tt.id === teeTimeId);
     const updatedPlayers = [...(teeTime.players || []), playerName];

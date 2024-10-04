@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { supabase } from '../supabase';
 import { toast } from "sonner";
 
@@ -16,11 +16,20 @@ export const useTeeTimes = () => useQuery({
     queryFn: async () => {
         console.log('Fetching tee times...');
         try {
-            const data = await fromSupabase(supabase
+            const query = supabase
                 .from('tee_times')
                 .select('*')
-                .order('tee_date', { ascending: true }));
+                .order('tee_date', { ascending: true });
+            
+            console.log('Supabase query:', query.toSQL());
+            
+            const data = await fromSupabase(query);
             console.log('Fetched tee times:', data);
+            
+            if (!data || data.length === 0) {
+                console.log('No tee times found in the database.');
+            }
+            
             return data;
         } catch (error) {
             console.error('Error fetching tee times:', error);
