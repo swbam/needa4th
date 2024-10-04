@@ -15,43 +15,31 @@ export const useTeeTimes = () => useQuery({
     queryKey: ['tee_times'],
     queryFn: async () => {
         try {
-            console.log('Fetching tee times...');
+            console.log('Fetching last 5 tee times...');
             const query = supabase
                 .from('tee_times')
                 .select(`
                     *,
-                    course_id
+                    course:courses(name)
                 `)
-                .order('tee_date', { ascending: true })
-                .order('tee_time', { ascending: true });
+                .order('tee_date', { ascending: false })
+                .order('tee_time', { ascending: false })
+                .limit(5);
             
             const teeTimes = await fromSupabase(query);
             
+            console.log('Raw tee times data:', teeTimes);
+
             if (!teeTimes || teeTimes.length === 0) {
                 console.log('No tee times found in the database.');
                 return [];
             }
 
-            // Fetch course names separately
-            const courseIds = [...new Set(teeTimes.map(tt => tt.course_id))];
-            const { data: courses } = await supabase
-                .from('courses')
-                .select('id, name')
-                .in('id', courseIds);
-
-            const coursesMap = Object.fromEntries(courses.map(c => [c.id, c.name]));
-
-            // Combine tee times with course names
-            const teeTimesWithCourses = teeTimes.map(tt => ({
-                ...tt,
-                course: { name: coursesMap[tt.course_id] || 'Unknown Course' }
-            }));
-
-            console.log('Fetched tee times:', teeTimesWithCourses);
-            return teeTimesWithCourses;
+            console.log('Fetched tee times:', teeTimes);
+            return teeTimes;
         } catch (error) {
             console.error('Error fetching tee times:', error);
-            toast.error("Failed to fetch tee times. Please try again later.");
+            toast.error("Failed to fetch tee times. Please check the console for more details.");
             throw error;
         }
     },

@@ -1,112 +1,35 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useTeeTimes, useUpdateTeeTime } from '@/integrations/supabase/hooks/useTeeTimes';
-import { toast } from "sonner";
-import { format, isPast, parseISO } from 'date-fns';
-
-const players = [
-  'Alex York', 'Andrew Rocco', 'Bob Murray', 'Chris Baker', 'Connor Stanley', 
-  'Derek Kozakiewicz', 'Dominic Nanni', 'Gilmore Connors', 'Guest', 'Heath Mansfield',
-  'Jackson Smith', 'Jason Story', 'Jesus Rios', 'John Shrader', 'Josh Alcala', 
-  'Josh Link', 'Kyle McFarland', 'Lane Hostettler', 'Martin Clayton', 'Mike Brooks', 
-  'Nathan Bateman', 'Parker Smith', 'Richard Caruso', 'Salvador Guzman', 'Seth Bambling'
-].sort();
+import { useTeeTimes } from '@/integrations/supabase/hooks/useTeeTimes';
+import { format, parseISO } from 'date-fns';
 
 const Schedule = () => {
-  const { data: schedule, isLoading, error } = useTeeTimes();
-  const updateTeeMutation = useUpdateTeeTime();
-  const [selectedPlayer, setSelectedPlayer] = useState('');
-  const [selectedTeeTime, setSelectedTeeTime] = useState(null);
+  const { data: teeTimes, isLoading, error } = useTeeTimes();
 
   if (isLoading) return <div className="text-center mt-8">Loading...</div>;
   if (error) return <div className="text-center mt-8 text-red-500">Error loading schedule: {error.message}</div>;
-  if (!schedule || schedule.length === 0) return <div className="text-center mt-8">No tee times available.</div>;
-
-  const handleJoin = (teeTime) => {
-    setSelectedTeeTime(teeTime);
-  };
-
-  const handleConfirm = () => {
-    if (!selectedPlayer || !selectedTeeTime) return;
-
-    const updatedPlayers = [...(selectedTeeTime.players || []), selectedPlayer];
-    
-    updateTeeMutation.mutate(
-      { 
-        id: selectedTeeTime.id, 
-        players: updatedPlayers 
-      },
-      {
-        onSuccess: () => {
-          toast.success(`${selectedPlayer} added to tee time successfully!`);
-          setSelectedPlayer('');
-          setSelectedTeeTime(null);
-        },
-        onError: (error) => {
-          toast.error(`Failed to add player: ${error.message}`);
-        }
-      }
-    );
-  };
+  if (!teeTimes || teeTimes.length === 0) return <div className="text-center mt-8">No tee times available.</div>;
 
   return (
-    <div className="container mx-auto px-4 py-8 pb-24">
-      <h1 className="text-3xl font-bold text-green-800 mb-6">Tee Times</h1>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold text-green-800 mb-6">Last 5 Tee Times</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {schedule.map((teeTime) => {
+        {teeTimes.map((teeTime) => {
           const teeDateTime = parseISO(`${teeTime.tee_date}T${teeTime.tee_time}`);
-          const isPastTeeTime = isPast(teeDateTime);
 
           return (
-            <Card key={teeTime.id} className={`bg-white shadow-lg ${isPastTeeTime ? 'opacity-60' : ''}`}>
+            <Card key={teeTime.id} className="bg-white shadow-lg">
               <CardHeader>
                 <CardTitle className="text-xl font-bold text-green-800">{teeTime.course.name}</CardTitle>
                 <p className="text-sm text-gray-600">
                   {format(teeDateTime, 'MMMM d, yyyy h:mm a')}
-                  {isPastTeeTime && ' (Past)'}
                 </p>
               </CardHeader>
               <CardContent>
                 <ul className="space-y-2">
                   {teeTime.players && teeTime.players.map((player, index) => (
-                    <li key={index} className="flex justify-between items-center">
-                      <span>{player}</span>
-                    </li>
+                    <li key={index}>{player}</li>
                   ))}
-                  {!isPastTeeTime && (!teeTime.players || teeTime.players.length < 4) && (
-                    <li>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button onClick={() => handleJoin(teeTime)} variant="outline" className="w-full bg-black text-white hover:bg-gray-800">Join</Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Confirm Tee Time</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              This is for {format(teeDateTime, 'h:mm a')} on {format(teeDateTime, 'MMMM d, yyyy')} at {teeTime.course.name}.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <Select onValueChange={setSelectedPlayer}>
-                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Select your name" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {players.map((player) => (
-                                <SelectItem key={player} value={player}>{player}</SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel onClick={() => setSelectedPlayer('')}>Cancel</AlertDialogCancel>
-                            <AlertDialogAction onClick={handleConfirm} disabled={!selectedPlayer}>Confirm</AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </li>
-                  )}
                 </ul>
               </CardContent>
             </Card>
