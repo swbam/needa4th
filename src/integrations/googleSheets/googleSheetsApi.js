@@ -1,7 +1,7 @@
 const SHEET_ID = import.meta.env.VITE_GOOGLE_SHEET_ID;
 
 export const fetchSheetData = async () => {
-  const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/A1:Z1000`);
+  const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Sheet1!A1:Z1000`);
 
   if (!response.ok) {
     throw new Error('Failed to fetch Google Sheets data');

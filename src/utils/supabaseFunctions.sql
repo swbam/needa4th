@@ -1,10 +1,7 @@
 -- Create courses table
 CREATE TABLE IF NOT EXISTS public.courses (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-    name TEXT NOT NULL,
-    location TEXT,
-    holes INTEGER,
-    par INTEGER,
+    name TEXT NOT NULL UNIQUE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );
 
@@ -18,28 +15,11 @@ CREATE TABLE IF NOT EXISTS public.tee_times (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );
 
--- Create bookings table
-CREATE TABLE IF NOT EXISTS public.bookings (
-    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-    user_id UUID REFERENCES public.users(id),
-    tee_time_id UUID REFERENCES public.tee_times(id),
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
-);
-
--- Add some sample data to courses
-INSERT INTO public.courses (name, location, holes, par)
-VALUES 
-('Pinehurst No. 2', 'Pinehurst, NC', 18, 72),
-('Pinehurst No. 4', 'Pinehurst, NC', 18, 72),
-('Pinehurst No. 8', 'Pinehurst, NC', 18, 72);
-
 -- Ensure proper permissions
 GRANT ALL ON public.courses TO authenticated;
 GRANT USAGE, SELECT ON SEQUENCE public.courses_id_seq TO authenticated;
 GRANT ALL ON public.tee_times TO authenticated;
 GRANT USAGE, SELECT ON SEQUENCE public.tee_times_id_seq TO authenticated;
-GRANT ALL ON public.bookings TO authenticated;
-GRANT USAGE, SELECT ON SEQUENCE public.bookings_id_seq TO authenticated;
 
 -- You may want to make course_id NOT NULL after updating existing records
 -- ALTER TABLE public.tee_times ALTER COLUMN course_id SET NOT NULL;

@@ -1,4 +1,5 @@
 import { supabase } from '../integrations/supabase/supabase';
+import { fetchSheetData } from '../integrations/googleSheets/googleSheetsApi';
 
 const createTables = async () => {
   const createCoursesTable = `
@@ -43,18 +44,48 @@ const createTables = async () => {
 };
 
 const insertSampleData = async () => {
-  const { data, error } = await supabase
-    .from('courses')
-    .insert([
-      { name: 'Pinehurst No. 2', location: 'Pinehurst, NC', holes: 18, par: 72 },
-      { name: 'Pinehurst No. 4', location: 'Pinehurst, NC', holes: 18, par: 72 },
-      { name: 'Pinehurst No. 8', location: 'Pinehurst, NC', holes: 18, par: 72 }
-    ]);
+  try {
+    const sheetData = await fetchSheetData();
+    
+    // Assuming the first row is headers
+    const headers = sheetData[0];
+    const teeTimesData = sheetData.slice(1).map(row => {
+      const teeTime = {};
+      headers.forEach((header, index) => {
+        teeTime[header.toLowerCase().replace(' ', '_')] = row[index];
+      });
+      return teeTime;
+    });
 
-  if (error) {
-    console.error('Error inserting sample data:', error);
-  } else {
+    // Insert courses
+    const uniqueCourses = [...new Set(teeTimesData.map(tt => tt.course))];
+    const { data: coursesData, error: coursesError } = await supabase
+      .from('courses')
+      .upsert(uniqueCourses.map(course => ({ name: course })), { onConflict: 'name' })
+      .select();
+
+    if (coursesError) throw coursesError;
+
+    // Create a map of course names to their IDs
+    const courseIdMap = Object.fromEntries(coursesData.map(c => [c.name, c.id]));
+
+    // Insert tee times
+    const { error: teeTimesError } = await supabase
+      .from('tee_times')
+      .upsert(
+        teeTimesData.map(tt => ({
+          tee_date: tt.date,
+          tee_time: tt.time,
+          course_id: courseIdMap[tt.course],
+          players: tt.players.split(',').map(p => p.trim()),
+        }))
+      );
+
+    if (teeTimesError) throw teeTimesError;
+
     console.log('Sample data inserted successfully');
+  } catch (error) {
+    console.error('Error inserting sample data:', error);
   }
 };
 
