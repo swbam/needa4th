@@ -6,7 +6,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useTeeTimes, useUpdateTeeTime } from '@/integrations/supabase/hooks/useTeeTimes';
 import { toast } from "sonner";
-import { format, isPast } from 'date-fns';
+import { format, isPast, parseISO } from 'date-fns';
 
 const players = [
   'Alex York', 'Andrew Rocco', 'Bob Murray', 'Chris Baker', 'Connor Stanley', 
@@ -53,8 +53,8 @@ const Schedule = () => {
   };
 
   const sortedSchedule = schedule?.sort((a, b) => {
-    const dateA = new Date(a.tee_date + 'T' + a.tee_time);
-    const dateB = new Date(b.tee_date + 'T' + b.tee_time);
+    const dateA = parseISO(`${a.tee_date}T${a.tee_time}`);
+    const dateB = parseISO(`${b.tee_date}T${b.tee_time}`);
     return dateB - dateA;
   });
 
@@ -64,7 +64,7 @@ const Schedule = () => {
       {sortedSchedule && sortedSchedule.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {sortedSchedule.map((teeTime) => {
-            const teeDateTime = new Date(teeTime.tee_date + 'T' + teeTime.tee_time);
+            const teeDateTime = parseISO(`${teeTime.tee_date}T${teeTime.tee_time}`);
             const isPastTeeTime = isPast(teeDateTime);
 
             return (
