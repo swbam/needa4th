@@ -32,6 +32,9 @@ supabase.auth.getSession().then(({ data, error }) => {
   } else {
     console.log('Successfully connected to Supabase')
   }
+}).catch(error => {
+  console.error('Error during Supabase connection test:', error.message)
+  throw error
 })
 
 console.log('Supabase client initialized with URL:', supabaseUrl)
