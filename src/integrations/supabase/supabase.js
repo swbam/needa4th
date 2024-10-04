@@ -8,6 +8,14 @@ if (!supabaseUrl || !supabaseKey) {
   throw new Error('Supabase configuration is incomplete')
 }
 
+// Validate the URL
+try {
+  new URL(supabaseUrl)
+} catch (error) {
+  console.error('Invalid Supabase URL:', supabaseUrl)
+  throw new Error('Invalid Supabase URL. Please check your .env file.')
+}
+
 export const supabase = createClient(supabaseUrl, supabaseKey)
 
 console.log('Supabase client initialized with URL:', supabaseUrl)
