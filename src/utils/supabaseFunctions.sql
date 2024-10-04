@@ -1,12 +1,12 @@
 -- Function to ensure tee_times table exists with all necessary columns
-CREATE OR REPLACE FUNCTION public.create_or_update_tee_times_table()
+CREATE OR REPLACE FUNCTION public.create_tee_times_table()
 RETURNS void AS $$
 BEGIN
   -- Create the table if it doesn't exist
   CREATE TABLE IF NOT EXISTS public.tee_times (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-    date DATE,
-    time TIME,
+    tee_date DATE,
+    tee_time TIME,
     location TEXT,
     players TEXT[],
     walk_ride TEXT,
@@ -16,8 +16,8 @@ BEGIN
 
   -- Add columns if they don't exist
   BEGIN
-    ALTER TABLE public.tee_times ADD COLUMN IF NOT EXISTS date DATE;
-    ALTER TABLE public.tee_times ADD COLUMN IF NOT EXISTS time TIME;
+    ALTER TABLE public.tee_times ADD COLUMN IF NOT EXISTS tee_date DATE;
+    ALTER TABLE public.tee_times ADD COLUMN IF NOT EXISTS tee_time TIME;
     ALTER TABLE public.tee_times ADD COLUMN IF NOT EXISTS location TEXT;
     ALTER TABLE public.tee_times ADD COLUMN IF NOT EXISTS players TEXT[];
     ALTER TABLE public.tee_times ADD COLUMN IF NOT EXISTS walk_ride TEXT;
@@ -31,7 +31,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Function to ensure users table exists with all necessary columns
-CREATE OR REPLACE FUNCTION public.create_or_update_users_table()
+CREATE OR REPLACE FUNCTION public.create_users_table()
 RETURNS void AS $$
 BEGIN
   -- Create the table if it doesn't exist
@@ -61,7 +61,7 @@ CREATE OR REPLACE FUNCTION public.add_sample_data()
 RETURNS void AS $$
 BEGIN
   -- Add sample tee times
-  INSERT INTO public.tee_times (date, time, location, players, walk_ride, organizer, attendees)
+  INSERT INTO public.tee_times (tee_date, tee_time, location, players, walk_ride, organizer, attendees)
   VALUES 
     ('2024-04-01', '07:00:00', 'Pinehurst No. 2', ARRAY['Parker Smith', 'Dominic Nanni', 'Connor Stanley', 'Jesus Rios'], 'Walk', 'Parker Smith', ARRAY['Parker Smith', 'Dominic Nanni', 'Connor Stanley', 'Jesus Rios']),
     ('2024-04-01', '07:10:00', 'Pinehurst No. 2', ARRAY['Derek Kozakiewicz', 'Jackson Smith', 'Bob Murray', 'Mike Brooks'], 'Walk', 'Derek Kozakiewicz', ARRAY['Derek Kozakiewicz', 'Jackson Smith', 'Bob Murray', 'Mike Brooks'])
@@ -80,6 +80,6 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Execute the functions
-SELECT create_or_update_tee_times_table();
-SELECT create_or_update_users_table();
+SELECT create_tee_times_table();
+SELECT create_users_table();
 SELECT add_sample_data();

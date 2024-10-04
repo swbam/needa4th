@@ -10,8 +10,8 @@ const fromSupabase = async (query) => {
 };
 
 const ensureTablesExist = async () => {
-    await supabase.rpc('create_or_update_tee_times_table');
-    await supabase.rpc('create_or_update_users_table');
+    await supabase.rpc('create_tee_times_table');
+    await supabase.rpc('create_users_table');
 };
 
 export const useTeeTimes = () => useQuery({
@@ -19,7 +19,7 @@ export const useTeeTimes = () => useQuery({
     queryFn: async () => {
         try {
             await ensureTablesExist();
-            return await fromSupabase(supabase.from('tee_times').select('*').order('date', { ascending: true }));
+            return await fromSupabase(supabase.from('tee_times').select('*').order('tee_date', { ascending: true }));
         } catch (error) {
             console.error('Error fetching tee times:', error);
             throw error;

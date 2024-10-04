@@ -52,7 +52,7 @@ const Schedule = () => {
           <Card key={teeTime.id} className="bg-white shadow-lg">
             <CardHeader>
               <CardTitle className="text-xl font-bold text-green-800">{teeTime.location}</CardTitle>
-              <p className="text-sm text-gray-600">{new Date(teeTime.date + 'T' + teeTime.time).toLocaleString()}</p>
+              <p className="text-sm text-gray-600">{new Date(teeTime.tee_date + 'T' + teeTime.tee_time).toLocaleString()}</p>
             </CardHeader>
             <CardContent>
               <ul className="space-y-2">
@@ -71,7 +71,7 @@ const Schedule = () => {
                         <AlertDialogHeader>
                           <AlertDialogTitle>Confirm Tee Time</AlertDialogTitle>
                           <AlertDialogDescription>
-                            This is for {teeTime.time} on {new Date(teeTime.date).toLocaleDateString()} at {teeTime.location}.
+                            This is for {teeTime.tee_time} on {new Date(teeTime.tee_date).toLocaleDateString()} at {teeTime.location}.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <Select onValueChange={(value) => handleJoin(teeTime.id, value)}>
