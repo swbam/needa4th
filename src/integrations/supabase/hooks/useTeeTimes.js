@@ -18,7 +18,10 @@ export const useTeeTimes = () => useQuery({
             console.log('Fetching tee times...');
             const query = supabase
                 .from('tee_times')
-                .select('*')
+                .select(`
+                    *,
+                    course:courses(name)
+                `)
                 .order('tee_date', { ascending: true })
                 .order('tee_time', { ascending: true });
             

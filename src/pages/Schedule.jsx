@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
@@ -20,12 +20,6 @@ const Schedule = () => {
   const updateTeeMutation = useUpdateTeeTime();
   const [selectedPlayer, setSelectedPlayer] = useState('');
   const [selectedTeeTime, setSelectedTeeTime] = useState(null);
-
-  useEffect(() => {
-    console.log('Schedule component rendered. Data:', schedule);
-    console.log('Is loading:', isLoading);
-    console.log('Error:', error);
-  }, [schedule, isLoading, error]);
 
   if (isLoading) return <div className="text-center mt-8">Loading...</div>;
   if (error) return <div className="text-center mt-8 text-red-500">Error loading schedule: {error.message}</div>;
@@ -58,24 +52,18 @@ const Schedule = () => {
     );
   };
 
-  const sortedSchedule = schedule.sort((a, b) => {
-    const dateA = parseISO(`${a.tee_date}T${a.tee_time}`);
-    const dateB = parseISO(`${b.tee_date}T${b.tee_time}`);
-    return dateA - dateB;
-  });
-
   return (
     <div className="container mx-auto px-4 py-8 pb-24">
       <h1 className="text-3xl font-bold text-green-800 mb-6">Tee Times</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {sortedSchedule.map((teeTime) => {
+        {schedule.map((teeTime) => {
           const teeDateTime = parseISO(`${teeTime.tee_date}T${teeTime.tee_time}`);
           const isPastTeeTime = isPast(teeDateTime);
 
           return (
             <Card key={teeTime.id} className={`bg-white shadow-lg ${isPastTeeTime ? 'opacity-60' : ''}`}>
               <CardHeader>
-                <CardTitle className="text-xl font-bold text-green-800">{teeTime.location}</CardTitle>
+                <CardTitle className="text-xl font-bold text-green-800">{teeTime.course.name}</CardTitle>
                 <p className="text-sm text-gray-600">
                   {format(teeDateTime, 'MMMM d, yyyy h:mm a')}
                   {isPastTeeTime && ' (Past)'}
@@ -98,7 +86,7 @@ const Schedule = () => {
                           <AlertDialogHeader>
                             <AlertDialogTitle>Confirm Tee Time</AlertDialogTitle>
                             <AlertDialogDescription>
-                              This is for {format(teeDateTime, 'h:mm a')} on {format(teeDateTime, 'MMMM d, yyyy')} at {teeTime.location}.
+                              This is for {format(teeDateTime, 'h:mm a')} on {format(teeDateTime, 'MMMM d, yyyy')} at {teeTime.course.name}.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <Select onValueChange={setSelectedPlayer}>
