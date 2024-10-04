@@ -16,16 +16,14 @@ export const useTeeTimes = () => useQuery({
     queryFn: async () => {
         try {
             console.log('Fetching last 5 tee times...');
-            const query = supabase
-                .from('tee_times')
-                .select('*')
-                .order('tee_date', { ascending: false })
-                .order('tee_time', { ascending: false })
-                .limit(5);
-            
-            console.log('Supabase query:', query);
-            
-            const teeTimes = await fromSupabase(query);
+            const teeTimes = await fromSupabase(
+                supabase
+                    .from('tee_times')
+                    .select('*')
+                    .order('tee_date', { ascending: false })
+                    .order('tee_time', { ascending: false })
+                    .limit(5)
+            );
             
             console.log('Raw tee times data:', teeTimes);
 
@@ -34,19 +32,17 @@ export const useTeeTimes = () => useQuery({
                 return [];
             }
 
-            // Fetch course names separately
-            const courseIds = [...new Set(teeTimes.map(teeTime => teeTime.course_id))];
+            // Fetch all courses
             const { data: courses } = await supabase
                 .from('courses')
-                .select('id, name')
-                .in('id', courseIds);
+                .select('id, name');
 
-            const coursesMap = Object.fromEntries(courses.map(course => [course.id, course.name]));
+            const coursesMap = Object.fromEntries(courses.map(course => [course.id, course]));
 
-            // Combine tee times with course names
+            // Combine tee times with course information
             const teeTimesWithCourses = teeTimes.map(teeTime => ({
                 ...teeTime,
-                course: { name: coursesMap[teeTime.course_id] || 'Unknown Course' }
+                course: coursesMap[teeTime.course_id] || { name: 'Unknown Course' }
             }));
 
             console.log('Fetched tee times with courses:', teeTimesWithCourses);
@@ -102,3 +98,4 @@ export const useDeleteTeeTime = () => {
         },
     });
 };
+
