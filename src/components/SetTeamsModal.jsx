@@ -2,34 +2,14 @@ import React, { useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(import.meta.env.VITE_SUPABASE_PROJECT_URL, import.meta.env.VITE_SUPABASE_API_KEY);
+import { useUpdateTeeTime } from '@/integrations/supabase/hooks/useTeeTimes';
 
 const SetTeamsModal = ({ isOpen, onClose, teeTime }) => {
   const [team1, setTeam1] = useState(teeTime.team1 || []);
   const [team2, setTeam2] = useState(teeTime.team2 || []);
   const [unassigned, setUnassigned] = useState(teeTime.players.filter(player => !team1.includes(player) && !team2.includes(player)));
 
-  const queryClient = useQueryClient();
-
-  const updateTeamsMutation = useMutation({
-    mutationFn: async ({ teeTimeId, team1, team2 }) => {
-      const { data, error } = await supabase
-        .from('tee_times')
-        .update({ team1, team2 })
-        .eq('id', teeTimeId)
-        .select();
-      
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries(['schedule']);
-      onClose();
-    },
-  });
+  const updateTeeMutation = useUpdateTeeTime();
 
   const onDragEnd = (result) => {
     const { source, destination } = result;
@@ -50,7 +30,15 @@ const SetTeamsModal = ({ isOpen, onClose, teeTime }) => {
   };
 
   const handleSaveTeams = () => {
-    updateTeamsMutation.mutate({ teeTimeId: teeTime.id, team1, team2 });
+    updateTeeMutation.mutate({ 
+      id: teeTime.id, 
+      team1, 
+      team2 
+    }, {
+      onSuccess: () => {
+        onClose();
+      }
+    });
   };
 
   return (
