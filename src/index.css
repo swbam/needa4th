@@ -1,14 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&display=swap');
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 @font-face {
   font-family: 'Bellenord' , sans-serif !important;
   src: url('/Bellenord.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -16,6 +11,7 @@
   src: url('/BentonSansRegular.otf') format('opentype');
   font-weight: normal;
   font-style: normal;
+  font-display: swap;
 }
 
 @layer base {
@@ -76,4 +72,8 @@
   button {
     font-family: 'BentonSansRegular', sans-serif;
   }
+}
+
+.logo {
+  font-family: 'Bellenord', sans-serif;
 }
