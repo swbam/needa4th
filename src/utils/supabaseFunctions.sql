@@ -1,5 +1,5 @@
 -- Create courses table
-CREATE TABLE public.courses (
+CREATE TABLE IF NOT EXISTS public.courses (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
     name TEXT NOT NULL,
     location TEXT,
@@ -8,8 +8,18 @@ CREATE TABLE public.courses (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );
 
+-- Create tee_times table
+CREATE TABLE IF NOT EXISTS public.tee_times (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    tee_date DATE NOT NULL,
+    tee_time TIME NOT NULL,
+    course_id UUID REFERENCES public.courses(id),
+    players TEXT[],
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
+);
+
 -- Create bookings table
-CREATE TABLE public.bookings (
+CREATE TABLE IF NOT EXISTS public.bookings (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
     user_id UUID REFERENCES public.users(id),
     tee_time_id UUID REFERENCES public.tee_times(id),
@@ -26,20 +36,10 @@ VALUES
 -- Ensure proper permissions
 GRANT ALL ON public.courses TO authenticated;
 GRANT USAGE, SELECT ON SEQUENCE public.courses_id_seq TO authenticated;
+GRANT ALL ON public.tee_times TO authenticated;
+GRANT USAGE, SELECT ON SEQUENCE public.tee_times_id_seq TO authenticated;
 GRANT ALL ON public.bookings TO authenticated;
 GRANT USAGE, SELECT ON SEQUENCE public.bookings_id_seq TO authenticated;
 
--- Add a course_id foreign key to tee_times table
-ALTER TABLE public.tee_times
-ADD COLUMN course_id UUID REFERENCES public.courses(id);
-
--- Update existing tee_times with course_id (assuming course names match)
-UPDATE public.tee_times
-SET course_id = (SELECT id FROM public.courses WHERE name = tee_times.course)
-WHERE course IS NOT NULL;
-
 -- You may want to make course_id NOT NULL after updating existing records
 -- ALTER TABLE public.tee_times ALTER COLUMN course_id SET NOT NULL;
-
--- Consider dropping the 'course' column from tee_times if you no longer need it
--- ALTER TABLE public.tee_times DROP COLUMN course;
