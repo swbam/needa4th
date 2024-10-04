@@ -35,11 +35,13 @@ const Schedule = () => {
 
   if (isLoading) return <div className="text-center mt-8">Loading...</div>;
   if (error) {
+    console.error('Error loading schedule:', error);
     toast.error("Failed to load tee times. Please try again later.");
     return <div className="text-center mt-8 text-red-500">Error loading schedule. Please try again later.</div>;
   }
 
   if (!schedule || schedule.length === 0) {
+    console.log('No tee times available:', schedule);
     return (
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold text-green-800 mb-6">Tee Times</h1>
