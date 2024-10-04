@@ -5,10 +5,12 @@ import './index.css';
 import { initializeDatabase } from './utils/initializeDatabase';
 
 // Initialize the database
-initializeDatabase();
-
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+initializeDatabase().then(() => {
+  ReactDOM.createRoot(document.getElementById('root')).render(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  );
+}).catch(error => {
+  console.error('Failed to initialize database:', error);
+});
