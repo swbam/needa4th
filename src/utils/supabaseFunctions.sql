@@ -110,10 +110,10 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Grant necessary permissions
-GRANT EXECUTE ON FUNCTION public.create_tee_times_table() TO anon, authenticated;
-GRANT EXECUTE ON FUNCTION public.create_users_table() TO anon, authenticated;
-GRANT EXECUTE ON FUNCTION public.import_image_data() TO anon, authenticated;
-GRANT EXECUTE ON FUNCTION public.update_tee_time_teams(UUID, TEXT[], TEXT[]) TO anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.create_tee_times_table() TO authenticated;
+GRANT EXECUTE ON FUNCTION public.create_users_table() TO authenticated;
+GRANT EXECUTE ON FUNCTION public.import_image_data() TO authenticated;
+GRANT EXECUTE ON FUNCTION public.update_tee_time_teams(UUID, TEXT[], TEXT[]) TO authenticated;
 
 -- Execute the functions
 SELECT create_tee_times_table();
