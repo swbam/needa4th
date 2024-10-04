@@ -17,7 +17,8 @@ export const useTeeTimes = () => useQuery({
         try {
             const query = supabase
                 .from('tee_times')
-                .select('*');
+                .select('*')
+                .order('tee_date', { ascending: true });
             
             const data = await fromSupabase(query);
             
