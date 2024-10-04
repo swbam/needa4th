@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 @font-face {
-  font-family: 'Bellenord' , sans-serif !important;
-  src: url('/Bellenord.ttf') format('truetype');
+  font-family: 'Bellenord';
+  src: url('/fonts/Bellenord.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -12,7 +12,7 @@
 
 @font-face {
   font-family: 'Benton Sans Regular';
-  src: url('/BentonSansRegular.otf') format('opentype');
+  src: url('/fonts/BentonSansRegular.otf') format('opentype');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
