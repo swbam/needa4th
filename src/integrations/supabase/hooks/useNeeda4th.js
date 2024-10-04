@@ -4,14 +4,20 @@ import { supabase } from '../supabase';
 const fromSupabase = async (query) => {
     const { data, error } = await query;
     if (error) {
+        console.error('Supabase error:', error);
         throw new Error(error.message);
     }
     return data;
 };
 
 const ensureTablesExist = async () => {
-    await supabase.rpc('create_tee_times_table');
-    await supabase.rpc('create_users_table');
+    try {
+        await supabase.rpc('create_tee_times_table');
+        await supabase.rpc('create_users_table');
+    } catch (error) {
+        console.error('Error ensuring tables exist:', error);
+        // Don't throw here, as the tables might already exist
+    }
 };
 
 export const useTeeTimes = () => useQuery({

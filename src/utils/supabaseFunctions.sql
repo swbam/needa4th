@@ -1,9 +1,12 @@
+-- Enable the pgcrypto extension for UUID generation
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
 -- Function to ensure tee_times table exists with all necessary columns
 CREATE OR REPLACE FUNCTION public.create_tee_times_table()
 RETURNS void AS $$
 BEGIN
   CREATE TABLE IF NOT EXISTS public.tee_times (
-    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     tee_date DATE,
     tee_time TIME,
     location TEXT,
@@ -32,7 +35,18 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- ... keep existing code (functions for creating users table)
+-- Function to ensure users table exists with all necessary columns
+CREATE OR REPLACE FUNCTION public.create_users_table()
+RETURNS void AS $$
+BEGIN
+  CREATE TABLE IF NOT EXISTS public.users (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    name TEXT,
+    email TEXT UNIQUE,
+    home_course TEXT
+  );
+END;
+$$ LANGUAGE plpgsql;
 
 -- Function to import data from the image
 CREATE OR REPLACE FUNCTION public.import_image_data()
@@ -94,6 +108,12 @@ BEGIN
   WHERE id = p_tee_time_id;
 END;
 $$ LANGUAGE plpgsql;
+
+-- Grant necessary permissions
+GRANT EXECUTE ON FUNCTION public.create_tee_times_table() TO anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.create_users_table() TO anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.import_image_data() TO anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.update_tee_time_teams(UUID, TEXT[], TEXT[]) TO anon, authenticated;
 
 -- Execute the functions
 SELECT create_tee_times_table();
