@@ -18,10 +18,7 @@ export const useTeeTimes = () => useQuery({
             console.log('Fetching last 5 tee times...');
             const query = supabase
                 .from('tee_times')
-                .select(`
-                    *,
-                    course:courses(name)
-                `)
+                .select('*')
                 .order('tee_date', { ascending: false })
                 .order('tee_time', { ascending: false })
                 .limit(5);
@@ -37,8 +34,23 @@ export const useTeeTimes = () => useQuery({
                 return [];
             }
 
-            console.log('Fetched tee times:', teeTimes);
-            return teeTimes;
+            // Fetch course names separately
+            const courseIds = [...new Set(teeTimes.map(teeTime => teeTime.course_id))];
+            const { data: courses } = await supabase
+                .from('courses')
+                .select('id, name')
+                .in('id', courseIds);
+
+            const coursesMap = Object.fromEntries(courses.map(course => [course.id, course.name]));
+
+            // Combine tee times with course names
+            const teeTimesWithCourses = teeTimes.map(teeTime => ({
+                ...teeTime,
+                course: { name: coursesMap[teeTime.course_id] || 'Unknown Course' }
+            }));
+
+            console.log('Fetched tee times with courses:', teeTimesWithCourses);
+            return teeTimesWithCourses;
         } catch (error) {
             console.error('Error fetching tee times:', error);
             toast.error("Failed to fetch tee times. Please check the console for more details.");
