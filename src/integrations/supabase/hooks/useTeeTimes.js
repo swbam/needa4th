@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../supabase';
+import { toast } from "sonner";
 
 const fromSupabase = async (query) => {
     const { data, error } = await query;
@@ -20,6 +21,7 @@ export const useTeeTimes = () => useQuery({
             return data;
         } catch (error) {
             console.error('Error fetching tee times:', error);
+            toast.error("Failed to fetch tee times. Please try again later.");
             throw error;
         }
     },
