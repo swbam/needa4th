@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useTeeTimes, useUpdateTeeTime } from '@/integrations/supabase/hooks/useNeeda4th';
+import { useTeeTimes, useUpdateTeeTime } from '@/integrations/supabase/hooks/useTeeTimes';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
@@ -21,6 +21,8 @@ const Schedule = () => {
 
   const { data: schedule, isLoading, error } = useTeeTimes();
   const updateTeeMutation = useUpdateTeeTime();
+
+  console.log('Schedule component rendered. Data:', schedule);
 
   const handleJoin = (teeTimeId, playerName) => {
     const teeTime = schedule.find(tt => tt.id === teeTimeId);
