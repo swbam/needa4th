@@ -23,8 +23,6 @@ const Schedule = () => {
   const { data: schedule, isLoading, error } = useTeeTimes();
   const updateTeeMutation = useUpdateTeeTime();
 
-  console.log('Schedule component rendered. Data:', schedule, 'isLoading:', isLoading, 'error:', error);
-
   React.useEffect(() => {
     if (error) {
       console.error('Error in useTeeTimes hook:', error);
@@ -69,15 +67,13 @@ const Schedule = () => {
             <CardHeader>
               <CardTitle className="text-xl font-bold text-green-800">{teeTime.course}</CardTitle>
               <p className="text-sm text-gray-600">
-                {format(parseISO(teeTime.tee_date), 'MMMM d, yyyy')} at {format(parseISO(teeTime.tee_time), 'h:mm a')}
+                {format(parseISO(teeTime.tee_date), 'M/d/yyyy, h:mm:ss a')}
               </p>
             </CardHeader>
             <CardContent>
               <ul className="space-y-2">
                 {teeTime.players && teeTime.players.map((player, index) => (
-                  <li key={index} className="flex justify-between items-center">
-                    <span>{player}</span>
-                  </li>
+                  <li key={index} className="text-lg">{player}</li>
                 ))}
                 {(!teeTime.players || teeTime.players.length < 4) && (
                   <li>
