@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useTeeTimes, useUpdateTeeTime } from '@/integrations/supabase/hooks/useTeeTimes';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,8 +16,8 @@ const players = [
 ].sort();
 
 const Schedule = () => {
-  const [isSetTeamsModalOpen, setIsSetTeamsModalOpen] = useState(false);
-  const [selectedTeeTime, setSelectedTeeTime] = useState(null);
+  const [isSetTeamsModalOpen, setIsSetTeamsModalOpen] = React.useState(false);
+  const [selectedTeeTime, setSelectedTeeTime] = React.useState(null);
 
   const { data: schedule, isLoading, error } = useTeeTimes();
   const updateTeeMutation = useUpdateTeeTime();
