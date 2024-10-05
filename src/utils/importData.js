@@ -2,6 +2,7 @@ import { supabase } from '../integrations/supabase/supabase';
 import { teeTimes, users } from './csvData';
 
 const importTeeTimes = async () => {
+  console.log('Starting tee times import...');
   const formattedTeeTimes = teeTimes.map(teeTime => ({
     date: teeTime.Date,
     location: teeTime.Location,
@@ -26,6 +27,7 @@ const importTeeTimes = async () => {
 };
 
 const importUsers = async () => {
+  console.log('Starting users import...');
   const formattedUsers = users.map(user => ({
     name: user.name,
     email: user.email,
@@ -48,6 +50,7 @@ const importUsers = async () => {
 };
 
 export const importAllData = async () => {
+  console.log('Starting data import process...');
   try {
     await importTeeTimes();
     await importUsers();
