@@ -8,6 +8,7 @@ import Schedule from './pages/Schedule';
 import AddTeeTime from './pages/AddTeeTime';
 import PastGames from './pages/PastGames';
 import Profile from './pages/Profile';
+import AdminDashboard from './pages/AdminDashboard';
 
 const queryClient = new QueryClient();
 
@@ -25,6 +26,7 @@ function App() {
                 <Route path="/add-tee-time" element={<AddTeeTime />} />
                 <Route path="/past" element={<PastGames />} />
                 <Route path="/profile" element={<Profile />} />
+                <Route path="/admin" element={<AdminDashboard />} />
               </Routes>
             </main>
             <BottomNav />

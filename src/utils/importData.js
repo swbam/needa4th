@@ -1,5 +1,5 @@
 import { supabase } from '../integrations/supabase/supabase';
-import { teeTimes } from './csvData';
+import { teeTimes, users } from './csvData';
 
 const importTeeTimes = async () => {
   const formattedTeeTimes = teeTimes.map(teeTime => ({
@@ -24,11 +24,34 @@ const importTeeTimes = async () => {
   return data;
 };
 
+const importUsers = async () => {
+  const formattedUsers = users.map(user => ({
+    name: user.name,
+    email: user.email,
+    home_course: user.homeCourse,
+    handicap: user.rating !== null ? parseFloat(user.rating) : null,
+  }));
+
+  const { data, error } = await supabase
+    .from('users')
+    .insert(formattedUsers);
+
+  if (error) {
+    console.error('Error importing users:', error);
+    throw error;
+  }
+
+  console.log('Users imported successfully:', data);
+  return data;
+};
+
 export const importAllData = async () => {
   try {
     await importTeeTimes();
+    await importUsers();
     console.log('All data imported successfully');
   } catch (error) {
     console.error('Error importing data:', error);
+    throw error;
   }
 };

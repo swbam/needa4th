@@ -18,7 +18,7 @@ const AdminDashboard = () => {
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold mb-4">Admin Dashboard</h1>
       <Button onClick={handleImportData} className="bg-blue-500 hover:bg-blue-600 text-white">
-        Import Dummy Data
+        Import All Data
       </Button>
     </div>
   );
