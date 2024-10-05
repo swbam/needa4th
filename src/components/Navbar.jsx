@@ -8,11 +8,13 @@ const Navbar = () => {
         <div className="flex justify-center items-center h-14">
           <Link 
             to="/" 
-            aria-label="needa4th" 
-            className="text-white text-2xl font-normal leading-none pt-[5px]"
-            style={{ fontFamily: 'BentonSans, sans-serif' }}
+            aria-label="needa4th"
           >
-            needa4th
+            <img 
+              src="/needa4th-logo-white.png" 
+              alt="needa4th logo" 
+              className="h-8"
+            />
           </Link>
         </div>
       </div>
