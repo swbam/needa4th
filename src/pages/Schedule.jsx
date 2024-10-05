@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { format, parse, isValid, isFuture } from 'date-fns';
-import { teeTimes } from '../utils/csvData';
+import { teeTimes, users } from '../utils/csvData';
 import { toast } from "sonner";
 
 const Schedule = () => {
@@ -36,8 +36,8 @@ const Schedule = () => {
     setSelectedName('');
   };
 
-  // Mock list of names (replace with actual data source later)
-  const playerNames = ['John Doe', 'Jane Smith', 'Mike Johnson', 'Emily Brown'];
+  // Use the names from the users data
+  const playerNames = users.map(user => user.name);
 
   return (
     <div className="container mx-auto px-4 py-8">
