@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,23 +6,13 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
-const players = [
-  'Parker Smith', 'Dominic Nanni', 'Connor Stanley', 'Jesus Rios', 'Derek Kozakiewicz',
-  'Jackson Smith', 'Bob Murray', 'Mike Brooks', 'Andrew Rocco', 'Heath Mansfield',
-  'Lane Hostettler', 'Josh Alcala', 'Richard Caruso', 'Martin Clayton', 'Salvador Guzman',
-  'Jason Story', 'Nathan Bateman', 'Seth Bambling', 'Josh Link', 'Chris Baker',
-  'Kyle McFarland', 'Gilmore Connors', 'Alex York', 'Guest', 'John Shrader'
-];
+import { teeTimes, users } from '../utils/csvData';
 
 const AddTeeTime = () => {
   const { control, handleSubmit, formState: { errors } } = useForm();
-  const [courses, setCourses] = useState([]);
 
-  useEffect(() => {
-    const storedCourses = JSON.parse(localStorage.getItem('courses') || '[]');
-    setCourses(storedCourses);
-  }, []);
+  const courses = [...new Set(teeTimes.map(teeTime => teeTime.Location))];
+  const players = users.map(user => user.name);
 
   const onSubmit = (data) => {
     console.log(data);
@@ -60,7 +50,7 @@ const AddTeeTime = () => {
                     </SelectTrigger>
                     <SelectContent>
                       {courses.map((course) => (
-                        <SelectItem key={course.id} value={course.name}>{course.name}</SelectItem>
+                        <SelectItem key={course} value={course}>{course}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
