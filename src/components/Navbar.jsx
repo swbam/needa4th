@@ -3,10 +3,10 @@ import { Link } from 'react-router-dom';
 
 const Navbar = () => {
   return (
-    <nav className="bg-masters-green py-4 shadow-md">
-      <div className="container mx-auto flex justify-center items-center">
-        <Link to="/" aria-label="Needa4th" className="text-white text-2xl font-normal" style={{ fontFamily: 'BentonSans, sans-serif' }}>
-          Needa4th
+    <nav className="bg-masters-green shadow-md">
+      <div className="container mx-auto flex justify-center items-center h-16">
+        <Link to="/" aria-label="needa4th" className="text-white text-2xl font-normal" style={{ fontFamily: 'BentonSans, sans-serif' }}>
+          needa4th
         </Link>
       </div>
     </nav>
