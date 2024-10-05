@@ -16,7 +16,7 @@ function App() {
       <Router>
         <div className="flex flex-col min-h-screen bg-[#f7f7f7]">
           <Navbar />
-          <main className="flex-grow container mx-auto px-4 py-8">
+          <main className="flex-grow container mx-auto px-4 py-6 mb-16">
             <Routes>
               <Route path="/" element={<Navigate replace to="/schedule" />} />
               <Route path="/schedule" element={<Schedule />} />

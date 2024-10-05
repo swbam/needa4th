@@ -36,7 +36,6 @@ const Schedule = () => {
     setSelectedName('');
   };
 
-  // Sort the player names alphabetically
   const playerNames = users.map(user => user.name).sort((a, b) => a.localeCompare(b));
 
   return (
