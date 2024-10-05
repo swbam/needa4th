@@ -36,8 +36,8 @@ const Schedule = () => {
     setSelectedName('');
   };
 
-  // Use the names from the users data
-  const playerNames = users.map(user => user.name);
+  // Sort the player names alphabetically
+  const playerNames = users.map(user => user.name).sort((a, b) => a.localeCompare(b));
 
   return (
     <div className="container mx-auto px-4 py-8">
