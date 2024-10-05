@@ -47,7 +47,7 @@
     --border: 20 5.9% 90%;
     --input: 20 5.9% 90%;
     --ring: 142 76% 36%;
-    --radius: 0.5rem;
+    --radius: 0rem;
   }
  
   .dark {
@@ -97,4 +97,15 @@
 
 .text-masters-green {
   color: #006747;
+}
+
+/* Add styles for buttons */
+button, .button {
+  @apply rounded-none font-normal;
+}
+
+/* Style filled buttons */
+button:not([class*="outline"]):not([class*="ghost"]):not([class*="link"]),
+.button:not([class*="outline"]):not([class*="ghost"]):not([class*="link"]) {
+  @apply bg-masters-green text-white hover:bg-masters-green/90;
 }
