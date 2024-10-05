@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { format, parseISO } from 'date-fns';
 import { useTeeTimes, useJoinTeeTime } from '../integrations/supabase/hooks/useTeeTimes';
 import { useSupabaseAuth } from '../integrations/supabase/auth';
@@ -43,7 +42,7 @@ const Schedule = () => {
             <CardContent className="p-6">
               <h2 className="text-[#006747] mb-2" style={{ fontWeight: 500, fontSize: '18px' }}>{teeTime.location}</h2>
               <p className="text-gray-600 mb-4">
-                {format(parseISO(teeTime.date), 'M/d/yyyy, h:mm a')}
+                {format(parseISO(teeTime.date), 'M/d/yyyy')} at {teeTime.time}
               </p>
               <ul className="space-y-2 mb-4">
                 {Array.from({ length: teeTime.max_players }).map((_, idx) => (
@@ -63,9 +62,6 @@ const Schedule = () => {
                   </li>
                 ))}
               </ul>
-              <p className="text-sm text-gray-600">
-                Walk/Ride: {teeTime.walk_ride}
-              </p>
             </CardContent>
           </Card>
         ))}

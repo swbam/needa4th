@@ -3,11 +3,10 @@ import { teeTimes } from './csvData';
 
 const importTeeTimes = async () => {
   const formattedTeeTimes = teeTimes.map(teeTime => ({
-    date: new Date(teeTime.Date).toISOString(),
+    date: teeTime.Date,
     location: teeTime.Location,
     time: teeTime.Time,
     max_players: parseInt(teeTime['# of Players']),
-    walk_ride: teeTime['Walk / Ride'].toLowerCase(),
     organizer: teeTime.Organizer,
     attendees: [teeTime.Organizer, teeTime.Attendee].filter(Boolean),
   }));
