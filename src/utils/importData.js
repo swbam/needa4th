@@ -13,7 +13,8 @@ const importTeeTimes = async () => {
 
   const { data, error } = await supabase
     .from('tee_times')
-    .insert(formattedTeeTimes);
+    .upsert(formattedTeeTimes, { onConflict: ['date', 'time', 'location'] })
+    .select();
 
   if (error) {
     console.error('Error importing tee times:', error);
@@ -34,7 +35,8 @@ const importUsers = async () => {
 
   const { data, error } = await supabase
     .from('users')
-    .insert(formattedUsers);
+    .upsert(formattedUsers, { onConflict: ['email'] })
+    .select();
 
   if (error) {
     console.error('Error importing users:', error);
