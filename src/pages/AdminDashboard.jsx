@@ -1,45 +1,25 @@
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { importAllData } from '../utils/importData';
+import { toast } from "sonner";
 
 const AdminDashboard = () => {
-  // Mock data for demonstration
-  const stats = {
-    totalUsers: 150,
-    activeTeeTime: 25,
-    totalRevenue: '$5,000'
+  const handleImportData = async () => {
+    try {
+      await importAllData();
+      toast.success("Data imported successfully");
+    } catch (error) {
+      console.error('Error importing data:', error);
+      toast.error("Failed to import data. Check console for details.");
+    }
   };
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold text-green-800">Admin Dashboard</h1>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Total Users</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-bold">{stats.totalUsers}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Active Tee Times</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-bold">{stats.activeTeeTime}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Total Revenue</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-bold">{stats.totalRevenue}</p>
-          </CardContent>
-        </Card>
-      </div>
-      <Button>Generate Report</Button>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-2xl font-bold mb-4">Admin Dashboard</h1>
+      <Button onClick={handleImportData} className="bg-blue-500 hover:bg-blue-600 text-white">
+        Import Dummy Data
+      </Button>
     </div>
   );
 };
