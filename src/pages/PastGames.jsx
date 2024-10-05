@@ -19,7 +19,7 @@ const PastGames = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold text-[#006747] mb-6">Past Tee Times</h1>
+      <h1 className="text-[#006747] mb-6" style={{ fontWeight: 500, fontSize: '18px' }}>Past Tee Times</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {pastGames.map((game, index) => {
           const teeDateTime = parse(`${game.Date} ${game.Time}`, 'M/d/yyyy HHmm', new Date());
@@ -27,7 +27,7 @@ const PastGames = () => {
           return (
             <Card key={index} className="bg-white shadow-lg border-none">
               <CardContent className="p-6">
-                <h2 className="text-xl font-bold text-[#006747] mb-2">{game.Location}</h2>
+                <h2 className="text-[#006747] mb-2" style={{ fontWeight: 500, fontSize: '18px' }}>{game.Location}</h2>
                 <p className="text-gray-600 mb-4">
                   {format(teeDateTime, 'M/d/yyyy, h:mm:ss a')}
                 </p>
