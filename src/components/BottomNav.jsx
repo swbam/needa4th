@@ -8,7 +8,7 @@ const BottomNav = () => {
   const navItems = [
     { to: "/schedule", icon: Calendar, label: "Schedule" },
     { to: "/past", icon: Clock, label: "Past" },
-    { to: "/add-course", icon: PlusCircle, label: "Add Course" },
+    { to: "/add-tee-time", icon: PlusCircle, label: "Add Tee Time" },
     { to: "/profile", icon: UserPlus, label: "Profile" },
   ];
 

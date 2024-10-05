@@ -15,14 +15,14 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Router>
-        <div className="flex flex-col min-h-screen">
+        <div className="flex flex-col min-h-screen bg-[#f7f7f7]">
           <Navbar />
           <main className="flex-grow container mx-auto px-4 py-8">
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/schedule" element={<Schedule />} />
               <Route path="/add-tee-time" element={<AddTeeTime />} />
-              <Route path="/past-games" element={<PastGames />} />
+              <Route path="/past" element={<PastGames />} />
               <Route path="/profile" element={<Profile />} />
             </Routes>
           </main>
