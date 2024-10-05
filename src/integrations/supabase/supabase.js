@@ -38,16 +38,3 @@ supabase.auth.getSession().then(({ data, error }) => {
 })
 
 console.log('Supabase client initialized with URL:', supabaseUrl)
-
-// Add a function to test RPC calls
-export const testRPCCall = async () => {
-  try {
-    const { data, error } = await supabase.rpc('create_tee_times_table')
-    if (error) throw error
-    console.log('RPC call successful:', data)
-    return data
-  } catch (error) {
-    console.error('RPC call failed:', error.message)
-    throw error
-  }
-}
