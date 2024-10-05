@@ -48,6 +48,8 @@
     --input: 20 5.9% 90%;
     --ring: 142 76% 36%;
     --radius: 0rem;
+    --masters-green: #006747;
+    --masters-green-hover: #005236;
   }
  
   .dark {
@@ -92,11 +94,11 @@
 }
 
 .bg-masters-green {
-  background-color: #006747;
+  background-color: var(--masters-green);
 }
 
 .text-masters-green {
-  color: #006747;
+  color: var(--masters-green);
 }
 
 /* Add styles for buttons */
@@ -107,5 +109,10 @@ button, .button {
 /* Style filled buttons */
 button:not([class*="outline"]):not([class*="ghost"]):not([class*="link"]),
 .button:not([class*="outline"]):not([class*="ghost"]):not([class*="link"]) {
-  @apply bg-masters-green text-white hover:bg-masters-green/90;
+  @apply bg-masters-green text-white;
+}
+
+button:not([class*="outline"]):not([class*="ghost"]):not([class*="link"]):hover,
+.button:not([class*="outline"]):not([class*="ghost"]):not([class*="link"]):hover {
+  background-color: var(--masters-green-hover);
 }
