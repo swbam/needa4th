@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { format, parse, isValid, isFuture } from 'date-fns';
 import { teeTimes } from '../utils/csvData';
 import { toast } from "sonner";
 
 const Schedule = () => {
   const [confirmJoinDialog, setConfirmJoinDialog] = useState({ isOpen: false, teeTime: null, slotIndex: null });
+  const [selectedName, setSelectedName] = useState('');
 
   const sortedTeeTimes = teeTimes
     .filter(teeTime => {
@@ -25,9 +27,17 @@ const Schedule = () => {
   };
 
   const handleConfirmJoin = () => {
-    toast.success("Successfully joined the tee time!");
+    if (!selectedName) {
+      toast.error("Please select a name before joining.");
+      return;
+    }
+    toast.success(`${selectedName} successfully joined the tee time!`);
     setConfirmJoinDialog({ isOpen: false, teeTime: null, slotIndex: null });
+    setSelectedName('');
   };
+
+  // Mock list of names (replace with actual data source later)
+  const playerNames = ['John Doe', 'Jane Smith', 'Mike Johnson', 'Emily Brown'];
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -70,13 +80,26 @@ const Schedule = () => {
       <Dialog open={confirmJoinDialog.isOpen} onOpenChange={(isOpen) => setConfirmJoinDialog(prev => ({ ...prev, isOpen }))}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Confirm Join</DialogTitle>
+            <DialogTitle>Join Tee Time</DialogTitle>
             <DialogDescription>
-              Are you sure you want to join this tee time?
+              Select your name to join this tee time.
             </DialogDescription>
           </DialogHeader>
+          <Select onValueChange={setSelectedName} value={selectedName}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select your name" />
+            </SelectTrigger>
+            <SelectContent>
+              {playerNames.map((name) => (
+                <SelectItem key={name} value={name}>{name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setConfirmJoinDialog({ isOpen: false, teeTime: null, slotIndex: null })}>
+            <Button variant="outline" onClick={() => {
+              setConfirmJoinDialog({ isOpen: false, teeTime: null, slotIndex: null });
+              setSelectedName('');
+            }}>
               Cancel
             </Button>
             <Button onClick={handleConfirmJoin} className="bg-[#006747] hover:bg-[#005236]">
