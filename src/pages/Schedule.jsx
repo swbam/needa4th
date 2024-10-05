@@ -1,14 +1,19 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { format, parse } from 'date-fns';
+import { format, parse, isValid } from 'date-fns';
 import { teeTimes } from '../utils/csvData';
 
 const Schedule = () => {
-  const sortedTeeTimes = teeTimes.sort((a, b) => {
-    const dateA = parse(`${a.Date} ${a.Time}`, 'M/d/yyyy HHmm', new Date());
-    const dateB = parse(`${b.Date} ${b.Time}`, 'M/d/yyyy HHmm', new Date());
-    return dateA - dateB;
-  });
+  const sortedTeeTimes = teeTimes
+    .filter(teeTime => {
+      const teeDateTime = parse(`${teeTime.Date} ${teeTime.Time}`, 'M/d/yyyy HHmm', new Date());
+      return isValid(teeDateTime);
+    })
+    .sort((a, b) => {
+      const dateA = parse(`${a.Date} ${a.Time}`, 'M/d/yyyy HHmm', new Date());
+      const dateB = parse(`${b.Date} ${b.Time}`, 'M/d/yyyy HHmm', new Date());
+      return dateA.getTime() - dateB.getTime();
+    });
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -24,7 +29,9 @@ const Schedule = () => {
                   {teeTime.Location}
                 </CardTitle>
                 <p className="text-sm text-gray-600">
-                  {format(teeDateTime, 'MMMM d, yyyy h:mm a')}
+                  {isValid(teeDateTime) 
+                    ? format(teeDateTime, 'MMMM d, yyyy h:mm a')
+                    : 'Invalid Date'}
                 </p>
               </CardHeader>
               <CardContent>
