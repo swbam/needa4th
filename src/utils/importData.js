@@ -12,6 +12,8 @@ const importTeeTimes = async () => {
     attendees: [teeTime.Organizer, teeTime.Attendee].filter(Boolean),
   }));
 
+  console.log('Formatted tee times:', formattedTeeTimes);
+
   const { data, error } = await supabase
     .from('tee_times')
     .upsert(formattedTeeTimes, { onConflict: ['date', 'time', 'location'] })
@@ -34,6 +36,8 @@ const importUsers = async () => {
     home_course: user.homeCourse,
     handicap: user.rating !== null ? parseFloat(user.rating) : null,
   }));
+
+  console.log('Formatted users:', formattedUsers);
 
   const { data, error } = await supabase
     .from('users')
