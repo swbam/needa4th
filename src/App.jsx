@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { SupabaseAuthProvider } from './integrations/supabase/auth';
@@ -9,26 +9,10 @@ import AddTeeTime from './pages/AddTeeTime';
 import PastGames from './pages/PastGames';
 import Profile from './pages/Profile';
 import AdminDashboard from './pages/AdminDashboard';
-import { importAllData } from './utils/importData';
-import { toast } from "sonner";
 
 const queryClient = new QueryClient();
 
 function App() {
-  useEffect(() => {
-    const runImport = async () => {
-      try {
-        await importAllData();
-        toast.success("Previous tee times imported successfully");
-      } catch (error) {
-        console.error("Error importing data:", error);
-        toast.error("Failed to import previous tee times");
-      }
-    };
-
-    runImport();
-  }, []);
-
   return (
     <QueryClientProvider client={queryClient}>
       <SupabaseAuthProvider>
