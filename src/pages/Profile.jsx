@@ -11,14 +11,13 @@ const Profile = () => {
   const [profile, setProfile] = useState(null);
 
   useEffect(() => {
-    // Simulate fetching the user profile
-    const mockUser = users[0]; // Using the first user as an example
-    setProfile(mockUser);
+    // Set Seth Bambling as the logged-in user
+    const sethBambling = users.find(user => user.name === 'Seth Bambling');
+    setProfile(sethBambling);
   }, []);
 
   const handleUpdateProfile = (e) => {
     e.preventDefault();
-    // Simulate updating the profile
     toast.success("Profile updated successfully");
   };
 
