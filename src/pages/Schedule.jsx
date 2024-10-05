@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
-import { format, parse, isValid } from 'date-fns';
+import { format, parse, isValid, isFuture } from 'date-fns';
 import { teeTimes } from '../utils/csvData';
 import { toast } from "sonner";
 
@@ -12,7 +12,7 @@ const Schedule = () => {
   const sortedTeeTimes = teeTimes
     .filter(teeTime => {
       const teeDateTime = parse(`${teeTime.Date} ${teeTime.Time}`, 'M/d/yyyy HHmm', new Date());
-      return isValid(teeDateTime);
+      return isValid(teeDateTime) && isFuture(teeDateTime);
     })
     .sort((a, b) => {
       const dateA = parse(`${a.Date} ${a.Time}`, 'M/d/yyyy HHmm', new Date());

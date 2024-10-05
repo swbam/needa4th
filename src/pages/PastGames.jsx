@@ -1,44 +1,19 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { format, parse, isBefore, subDays } from 'date-fns';
+import { format, parse, isPast } from 'date-fns';
 import { teeTimes } from '../utils/csvData';
 
 const PastGames = () => {
-  const now = new Date();
-  const threeDaysAgo = subDays(now, 3);
-  
-  // Filter tee times to get past games and add some dummy data
-  const pastGames = [
-    ...teeTimes.filter(teeTime => {
+  const pastGames = teeTimes
+    .filter(teeTime => {
       const teeDateTime = parse(`${teeTime.Date} ${teeTime.Time}`, 'M/d/yyyy HHmm', new Date());
-      return isBefore(teeDateTime, now);
-    }),
-    // Add dummy data
-    {
-      Date: format(subDays(now, 1), 'M/d/yyyy'),
-      Time: '1400',
-      Location: 'Dummy Course 1',
-      Organizer: 'Seth Bambling',
-      Attendee: 'John Doe',
-      'Walk / Ride': 'Walk',
-      '# of Players': '4',
-      'Slot #': '1'
-    },
-    {
-      Date: format(subDays(now, 2), 'M/d/yyyy'),
-      Time: '0900',
-      Location: 'Dummy Course 2',
-      Organizer: 'Jane Smith',
-      Attendee: 'Seth Bambling',
-      'Walk / Ride': 'Ride',
-      '# of Players': '3',
-      'Slot #': '2'
-    }
-  ].sort((a, b) => {
-    const dateA = parse(`${a.Date} ${a.Time}`, 'M/d/yyyy HHmm', new Date());
-    const dateB = parse(`${b.Date} ${b.Time}`, 'M/d/yyyy HHmm', new Date());
-    return dateB - dateA;
-  });
+      return isPast(teeDateTime);
+    })
+    .sort((a, b) => {
+      const dateA = parse(`${a.Date} ${a.Time}`, 'M/d/yyyy HHmm', new Date());
+      const dateB = parse(`${b.Date} ${b.Time}`, 'M/d/yyyy HHmm', new Date());
+      return dateB - dateA;
+    });
 
   if (pastGames.length === 0) return <div className="text-center mt-8">No past games available.</div>;
 
