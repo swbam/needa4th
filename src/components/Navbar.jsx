@@ -6,14 +6,14 @@ const Navbar = () => {
     <nav className="bg-masters-green shadow-md">
       <div className="container mx-auto px-4">
         <div className="flex justify-center items-center h-14">
-          <Link 
-            to="/" 
+          <Link
+            to="/"
             aria-label="needa4th"
           >
-            <img 
-              src="/needa4th-logo-white.png" 
-              alt="needa4th logo" 
-              className="h-8"
+            <img
+              src="/logo-white.png"
+              alt="needa4th logo"
+              className="h-7"
             />
           </Link>
         </div>
