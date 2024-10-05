@@ -1,19 +1,23 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '../supabase';
 import { toast } from "sonner";
-import { teeTimes } from '../../../utils/csvData';
 
 export const useTeeTimes = () => useQuery({
     queryKey: ['tee_times'],
-    queryFn: () => teeTimes,
+    queryFn: async () => {
+        const { data, error } = await supabase.from('tee_times').select('*');
+        if (error) throw error;
+        return data;
+    },
 });
 
 export const useAddTeeTime = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (newTeeTime) => {
-            // Simulate adding a new tee time
-            const updatedTeeTimes = [...teeTimes, { ...newTeeTime, id: Date.now() }];
-            return Promise.resolve(updatedTeeTimes);
+        mutationFn: async (newTeeTime) => {
+            const { data, error } = await supabase.from('tee_times').insert(newTeeTime).single();
+            if (error) throw error;
+            return data;
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['tee_times'] });
@@ -28,12 +32,14 @@ export const useAddTeeTime = () => {
 export const useUpdateTeeTime = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: ({ id, ...updateData }) => {
-            // Simulate updating a tee time
-            const updatedTeeTimes = teeTimes.map(teeTime => 
-                teeTime.id === id ? { ...teeTime, ...updateData } : teeTime
-            );
-            return Promise.resolve(updatedTeeTimes);
+        mutationFn: async ({ id, ...updateData }) => {
+            const { data, error } = await supabase
+                .from('tee_times')
+                .update(updateData)
+                .eq('id', id)
+                .single();
+            if (error) throw error;
+            return data;
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['tee_times'] });
@@ -48,10 +54,9 @@ export const useUpdateTeeTime = () => {
 export const useDeleteTeeTime = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (id) => {
-            // Simulate deleting a tee time
-            const updatedTeeTimes = teeTimes.filter(teeTime => teeTime.id !== id);
-            return Promise.resolve(updatedTeeTimes);
+        mutationFn: async (id) => {
+            const { error } = await supabase.from('tee_times').delete().eq('id', id);
+            if (error) throw error;
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['tee_times'] });
@@ -59,6 +64,27 @@ export const useDeleteTeeTime = () => {
         },
         onError: () => {
             toast.error("Failed to delete tee time. Please try again.");
+        },
+    });
+};
+
+export const useJoinTeeTime = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: async ({ teeTimeId, userId }) => {
+            const { data, error } = await supabase
+                .from('tee_time_attendees')
+                .insert({ tee_time_id: teeTimeId, user_id: userId })
+                .single();
+            if (error) throw error;
+            return data;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['tee_times'] });
+            toast.success("Successfully joined tee time.");
+        },
+        onError: () => {
+            toast.error("Failed to join tee time. Please try again.");
         },
     });
 };

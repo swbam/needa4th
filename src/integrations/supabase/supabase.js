@@ -8,33 +8,15 @@ if (!supabaseUrl || !supabaseKey) {
   throw new Error('Supabase configuration is incomplete')
 }
 
-// Validate the URL
-try {
-  new URL(supabaseUrl)
-} catch (error) {
-  console.error('Invalid Supabase URL:', supabaseUrl)
-  throw new Error('Invalid Supabase URL. Please check your .env file.')
-}
-
-// Validate the API key format (basic check)
-if (!/^[a-zA-Z0-9._-]+$/.test(supabaseKey)) {
-  console.error('Invalid Supabase API key format')
-  throw new Error('Invalid Supabase API key format. Please check your .env file.')
-}
-
 export const supabase = createClient(supabaseUrl, supabaseKey)
 
 // Test the connection
 supabase.auth.getSession().then(({ data, error }) => {
   if (error) {
     console.error('Failed to connect to Supabase:', error.message)
-    throw new Error('Failed to connect to Supabase. Please check your API key.')
   } else {
     console.log('Successfully connected to Supabase')
   }
 }).catch(error => {
   console.error('Error during Supabase connection test:', error.message)
-  throw error
 })
-
-console.log('Supabase client initialized with URL:', supabaseUrl)

@@ -3,77 +3,72 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { format, parse, isValid, isFuture } from 'date-fns';
-import { teeTimes, users } from '../utils/csvData';
+import { format, parseISO } from 'date-fns';
+import { useTeeTimes, useJoinTeeTime } from '../integrations/supabase/hooks/useTeeTimes';
+import { useSupabaseAuth } from '../integrations/supabase/auth';
 import { toast } from "sonner";
 
 const Schedule = () => {
-  const [confirmJoinDialog, setConfirmJoinDialog] = useState({ isOpen: false, teeTime: null, slotIndex: null });
-  const [selectedName, setSelectedName] = useState('');
+  const { data: teeTimes, isLoading, error } = useTeeTimes();
+  const joinTeeTimeMutation = useJoinTeeTime();
+  const { user } = useSupabaseAuth();
+  const [confirmJoinDialog, setConfirmJoinDialog] = useState({ isOpen: false, teeTime: null });
 
-  const sortedTeeTimes = teeTimes
-    .filter(teeTime => {
-      const teeDateTime = parse(`${teeTime.Date} ${teeTime.Time}`, 'M/d/yyyy HHmm', new Date());
-      return isValid(teeDateTime) && isFuture(teeDateTime);
-    })
-    .sort((a, b) => {
-      const dateA = parse(`${a.Date} ${a.Time}`, 'M/d/yyyy HHmm', new Date());
-      const dateB = parse(`${b.Date} ${b.Time}`, 'M/d/yyyy HHmm', new Date());
-      return dateA.getTime() - dateB.getTime();
-    });
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
 
-  const handleJoinClick = (teeTime, slotIndex) => {
-    setConfirmJoinDialog({ isOpen: true, teeTime, slotIndex });
+  const handleJoinClick = (teeTime) => {
+    setConfirmJoinDialog({ isOpen: true, teeTime });
   };
 
-  const handleConfirmJoin = () => {
-    if (!selectedName) {
-      toast.error("Please select a name before joining.");
+  const handleConfirmJoin = async () => {
+    if (!user) {
+      toast.error("Please sign in to join a tee time.");
       return;
     }
-    toast.success(`${selectedName} successfully joined the tee time!`);
-    setConfirmJoinDialog({ isOpen: false, teeTime: null, slotIndex: null });
-    setSelectedName('');
+    try {
+      await joinTeeTimeMutation.mutateAsync({ teeTimeId: confirmJoinDialog.teeTime.id, userId: user.id });
+      setConfirmJoinDialog({ isOpen: false, teeTime: null });
+    } catch (error) {
+      console.error("Error joining tee time:", error);
+    }
   };
-
-  const playerNames = users.map(user => user.name).sort((a, b) => a.localeCompare(b));
 
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-[#006747] mb-6" style={{ fontWeight: 500, fontSize: '18px' }}>Upcoming Tee Times</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {sortedTeeTimes.map((teeTime, index) => {
-          const teeDateTime = parse(`${teeTime.Date} ${teeTime.Time}`, 'M/d/yyyy HHmm', new Date());
-
-          return (
-            <Card key={index} className="bg-white shadow-lg border-none">
-              <CardContent className="p-6">
-                <h2 className="text-[#006747] mb-2" style={{ fontWeight: 500, fontSize: '18px' }}>{teeTime.Location}</h2>
-                <p className="text-gray-600 mb-4">
-                  {isValid(teeDateTime) 
-                    ? format(teeDateTime, 'M/d/yyyy, h:mm:ss a')
-                    : 'Invalid Date'}
-                </p>
-                <ul className="space-y-2 mb-4">
-                  {[teeTime.Organizer, teeTime.Attendee, '', ''].slice(0, parseInt(teeTime['# of Players'])).map((player, idx) => (
-                    <li key={idx} className="font-medium">
-                      {player || (
-                        <Button 
-                          onClick={() => handleJoinClick(teeTime, idx)} 
-                          variant="outline" 
-                          size="sm"
-                          className="w-full text-[#006747] border-[#006747] hover:bg-[#006747] hover:text-white"
-                        >
-                          Join
-                        </Button>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-          );
-        })}
+        {teeTimes.map((teeTime) => (
+          <Card key={teeTime.id} className="bg-white shadow-lg border-none">
+            <CardContent className="p-6">
+              <h2 className="text-[#006747] mb-2" style={{ fontWeight: 500, fontSize: '18px' }}>{teeTime.location}</h2>
+              <p className="text-gray-600 mb-4">
+                {format(parseISO(teeTime.date), 'M/d/yyyy, h:mm a')}
+              </p>
+              <ul className="space-y-2 mb-4">
+                {Array.from({ length: teeTime.max_players }).map((_, idx) => (
+                  <li key={idx} className="font-medium">
+                    {teeTime.attendees && teeTime.attendees[idx] ? (
+                      teeTime.attendees[idx].name
+                    ) : (
+                      <Button 
+                        onClick={() => handleJoinClick(teeTime)} 
+                        variant="outline" 
+                        size="sm"
+                        className="w-full text-[#006747] border-[#006747] hover:bg-[#006747] hover:text-white"
+                      >
+                        Join
+                      </Button>
+                    )}
+                  </li>
+                ))}
+              </ul>
+              <p className="text-sm text-gray-600">
+                Walk/Ride: {teeTime.walk_ride}
+              </p>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
       <Dialog open={confirmJoinDialog.isOpen} onOpenChange={(isOpen) => setConfirmJoinDialog(prev => ({ ...prev, isOpen }))}>
@@ -81,24 +76,11 @@ const Schedule = () => {
           <DialogHeader>
             <DialogTitle>Join Tee Time</DialogTitle>
             <DialogDescription>
-              Select your name to join this tee time.
+              Are you sure you want to join this tee time?
             </DialogDescription>
           </DialogHeader>
-          <Select onValueChange={setSelectedName} value={selectedName}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select your name" />
-            </SelectTrigger>
-            <SelectContent>
-              {playerNames.map((name) => (
-                <SelectItem key={name} value={name}>{name}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
           <DialogFooter>
-            <Button variant="outline" onClick={() => {
-              setConfirmJoinDialog({ isOpen: false, teeTime: null, slotIndex: null });
-              setSelectedName('');
-            }}>
+            <Button variant="outline" onClick={() => setConfirmJoinDialog({ isOpen: false, teeTime: null })}>
               Cancel
             </Button>
             <Button onClick={handleConfirmJoin} className="bg-[#006747] hover:bg-[#005236]">
