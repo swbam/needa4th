@@ -9,7 +9,7 @@ const Navbar = () => {
           <Link 
             to="/" 
             aria-label="needa4th" 
-            className="text-white text-2xl font-normal leading-none"
+            className="text-white text-2xl font-normal leading-none pt-[5px]"
             style={{ fontFamily: 'BentonSans, sans-serif' }}
           >
             needa4th
