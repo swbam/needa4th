@@ -49,7 +49,7 @@ const Schedule = () => {
           return (
             <Card key={index} className="bg-white shadow-lg border-none">
               <CardContent className="p-6">
-                <h2 className="text-2xl font-bold text-[#006747] mb-2">{teeTime.Location}</h2>
+                <h2 className="text-[#006747] mb-2" style={{ fontWeight: 500, fontSize: '18px' }}>{teeTime.Location}</h2>
                 <p className="text-gray-600 mb-4">
                   {isValid(teeDateTime) 
                     ? format(teeDateTime, 'M/d/yyyy, h:mm:ss a')
