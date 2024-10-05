@@ -71,22 +71,23 @@
     --input: 12 6.5% 15.1%;
     --ring: 142 70.6% 45.3%;
   }
-}
 
-@layer base {
-  * {
-    @apply border-border;
-  }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground text-sm;
     font-family: 'BentonSans', sans-serif;
+    font-weight: normal;
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: 'BentonSans', sans-serif;
-    font-weight: bold;
+    font-weight: normal;
   }
+  h1 { @apply text-2xl; }
+  h2 { @apply text-xl; }
+  h3 { @apply text-lg; }
+  h4, h5, h6 { @apply text-base; }
   button {
     font-family: 'BentonSans', sans-serif;
+    font-weight: normal;
   }
 }
 
