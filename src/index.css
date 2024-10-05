@@ -90,11 +90,10 @@
   }
 }
 
-.logo {
-  background-image: url('/needa4th-logo-green.png');
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  width: 150px;
-  height: 50px;
+.bg-masters-green {
+  background-color: #006747;
+}
+
+.text-masters-green {
+  color: #006747;
 }
