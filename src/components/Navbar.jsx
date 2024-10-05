@@ -6,7 +6,7 @@ const Navbar = () => {
     <nav className="bg-masters-green py-4 shadow-md">
       <div className="container mx-auto flex justify-center items-center">
         <Link to="/" aria-label="Needa4th">
-          <img src="/logo-light.png" alt="Needa4th Logo" className="h-5" /> {/* Reduced from h-8 to h-5 (about 40% smaller) */}
+          <img src="/needa4th-logo-white.png" alt="Needa4th Logo" className="h-5" />
         </Link>
       </div>
     </nav>
