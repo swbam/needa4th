@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { DatePicker } from "@/components/ui/date-picker";
 import { useAddTeeTime } from '../integrations/supabase/hooks/useTeeTimes';
 import { useSupabaseAuth } from '../integrations/supabase/auth';
+import { toast } from "sonner"; // Add this import
 
 const AddTeeTime = () => {
   const { control, handleSubmit, formState: { errors } } = useForm();
@@ -30,6 +31,7 @@ const AddTeeTime = () => {
       navigate('/schedule');
     } catch (error) {
       console.error("Error adding tee time:", error);
+      toast.error("Failed to add tee time. Please try again."); // Add error toast
     }
   };
 
