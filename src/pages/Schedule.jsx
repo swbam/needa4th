@@ -33,19 +33,29 @@ const Schedule = () => {
     }
   };
 
+  const formatDate = (dateString) => {
+    if (!dateString) return 'Date not available';
+    try {
+      return format(parseISO(dateString), 'M/d/yyyy');
+    } catch (error) {
+      console.error('Error parsing date:', error);
+      return 'Invalid date';
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-[#006747] mb-6" style={{ fontWeight: 500, fontSize: '18px' }}>Upcoming Tee Times</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {teeTimes.map((teeTime) => (
+        {teeTimes && teeTimes.map((teeTime) => (
           <Card key={teeTime.id} className="bg-white shadow-lg border-none">
             <CardContent className="p-6">
-              <h2 className="text-[#006747] mb-2" style={{ fontWeight: 500, fontSize: '18px' }}>{teeTime.location}</h2>
+              <h2 className="text-[#006747] mb-2" style={{ fontWeight: 500, fontSize: '18px' }}>{teeTime.location || 'Location not specified'}</h2>
               <p className="text-gray-600 mb-4">
-                {format(parseISO(teeTime.date), 'M/d/yyyy')} at {teeTime.time}
+                {formatDate(teeTime.date)} at {teeTime.time || 'Time not specified'}
               </p>
               <ul className="space-y-2 mb-4">
-                {Array.from({ length: teeTime.max_players }).map((_, idx) => (
+                {Array.from({ length: teeTime.max_players || 4 }).map((_, idx) => (
                   <li key={idx} className="font-medium">
                     {teeTime.attendees && teeTime.attendees[idx] ? (
                       teeTime.attendees[idx].name
