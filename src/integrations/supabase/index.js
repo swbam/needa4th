@@ -1,11 +1,77 @@
-// Import all the relevant exports from other files in the supabase directory
-import { supabase } from './supabase.js';
-import { SupabaseAuthProvider, useSupabaseAuth, SupabaseAuthUI } from './auth.jsx';
+import { supabase } from './supabase';
+import { SupabaseAuthProvider, useSupabaseAuth, SupabaseAuthUI } from './auth';
 
-// Export all the imported functions and objects from .auth and .hooks/
+// Import and export all hooks
+import {
+  usePlayersTeeTime,
+  usePlayersTeeTimesByPlayer,
+  usePlayersTeeTimesByTeeTime,
+  useAddPlayerTeeTime,
+  useUpdatePlayerTeeTime,
+  useDeletePlayerTeeTime
+} from './hooks/players_tee_times';
+
+import {
+  usePlayer,
+  usePlayers,
+  useAddPlayer,
+  useUpdatePlayer,
+  useDeletePlayer
+} from './hooks/players';
+
+import {
+  useTeeTime,
+  useTeeTimes,
+  useAddTeeTime,
+  useUpdateTeeTime,
+  useDeleteTeeTime
+} from './hooks/tee_times';
+
+import {
+  useScore,
+  useScores,
+  useAddScore,
+  useUpdateScore,
+  useDeleteScore
+} from './hooks/scores';
+
+import {
+  useCourse,
+  useCourses,
+  useAddCourse,
+  useUpdateCourse,
+  useDeleteCourse
+} from './hooks/courses';
+
 export {
   supabase,
   SupabaseAuthProvider,
   useSupabaseAuth,
   SupabaseAuthUI,
+  usePlayersTeeTime,
+  usePlayersTeeTimesByPlayer,
+  usePlayersTeeTimesByTeeTime,
+  useAddPlayerTeeTime,
+  useUpdatePlayerTeeTime,
+  useDeletePlayerTeeTime,
+  usePlayer,
+  usePlayers,
+  useAddPlayer,
+  useUpdatePlayer,
+  useDeletePlayer,
+  useTeeTime,
+  useTeeTimes,
+  useAddTeeTime,
+  useUpdateTeeTime,
+  useDeleteTeeTime,
+  useScore,
+  useScores,
+  useAddScore,
+  useUpdateScore,
+  useDeleteScore,
+  useCourse,
+  useCourses,
+  useAddCourse,
+  useUpdateCourse,
+  useDeleteCourse
 };
