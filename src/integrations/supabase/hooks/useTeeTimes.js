@@ -85,84 +85,24 @@ export const useDeleteTeeTime = () => {
     });
 };
 
-export const useJoinTeeTime = () => {
-    const queryClient = useQueryClient();
-    return useMutation({
-        mutationFn: async ({ teeTimeId, playerId }) => {
-            const { data, error } = await supabase
-                .from('players_tee_times')
-                .insert({ tee_time_id: teeTimeId, player_id: playerId })
-                .single();
-            if (error) throw error;
-            return data;
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['tee_times'] });
-            toast.success("Successfully joined tee time.");
-        },
-        onError: () => {
-            toast.error("Failed to join tee time. Please try again.");
-        },
-    });
-};
-
 const formatDate = (dateString) => {
     if (!dateString) return 'Date not available';
     try {
         const date = parseISO(dateString);
-        const dayOfWeek = format(date, 'EEE');
-        const month = format(date, 'MMM');
-        const dayOfMonth = format(date, 'd');
-        const year = format(date, 'yyyy');
-        return `${dayOfWeek}, ${month} ${dayOfMonth}, ${year}`;
+        return format(date, 'EEE, MMM d');
     } catch (error) {
         console.error('Error parsing date:', error);
         return 'Invalid date';
     }
 };
 
-const formatTime = (timeString) => {
-    if (!timeString) return 'Time not specified';
+const formatTime = (dateString) => {
+    if (!dateString) return 'Time not specified';
     try {
-        return format(parseISO(timeString), 'h:mm a');
+        const date = parseISO(dateString);
+        return format(date, 'h:mm a');
     } catch (error) {
         console.error('Error parsing time:', error);
-        return timeString;
-    }
-};
-
-// Updated function to test adding a tee time and a player
-export const testAddTeeTimeAndPlayer = async () => {
-    try {
-        // Add a new tee time
-        const { data: newTeeTime, error: teeTimeError } = await supabase
-            .from('tee_times')
-            .insert({
-                date_time: new Date(Date.now() + 86400000).toISOString(), // Tomorrow
-                course_id: 1, // Assuming course with id 1 exists
-            })
-            .single();
-
-        if (teeTimeError) throw teeTimeError;
-
-        console.log('New tee time added:', newTeeTime);
-
-        // Add a player to the tee time
-        const { data: newPlayerTeeTime, error: playerTeeTimeError } = await supabase
-            .from('players_tee_times')
-            .insert({
-                tee_time_id: newTeeTime.id,
-                player_id: 1 // Assuming player with id 1 exists
-            })
-            .single();
-
-        if (playerTeeTimeError) throw playerTeeTimeError;
-
-        console.log('Player added to tee time:', newPlayerTeeTime);
-
-        return { newTeeTime, newPlayerTeeTime };
-    } catch (error) {
-        console.error('Error in test:', error);
-        throw error;
+        return dateString;
     }
 };

@@ -11,6 +11,7 @@ import { useAddTeeTime } from '../integrations/supabase/hooks/useTeeTimes';
 import { useSupabaseAuth } from '../integrations/supabase/auth';
 import { usePlayers } from '../integrations/supabase/hooks/players';
 import { toast } from "sonner";
+import { format } from 'date-fns';
 
 const AddTeeTime = () => {
   const { control, handleSubmit, formState: { errors } } = useForm();
@@ -25,10 +26,14 @@ const AddTeeTime = () => {
       return;
     }
     try {
-      await addTeeTimeMutation.mutateAsync({
-        ...data,
+      const formattedDateTime = format(new Date(`${data.date}T${data.time}`), "yyyy-MM-dd'T'HH:mm:ssXXX");
+      const newTeeTime = {
+        date_time: formattedDateTime,
+        course_id: parseInt(data.course),
         organizer_id: user.id,
-      });
+      };
+      await addTeeTimeMutation.mutateAsync(newTeeTime);
+      toast.success("Tee time added successfully!");
       navigate('/schedule');
     } catch (error) {
       console.error("Error adding tee time:", error);
@@ -70,43 +75,30 @@ const AddTeeTime = () => {
               {errors.time && <span className="text-red-500 text-sm">{errors.time.message}</span>}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="location">Course</Label>
+              <Label htmlFor="course">Course</Label>
               <Controller
-                name="location"
+                name="course"
                 control={control}
                 rules={{ required: "Course is required" }}
-                render={({ field }) => <Input id="location" {...field} className="w-full" />}
-              />
-              {errors.location && <span className="text-red-500 text-sm">{errors.location.message}</span>}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="organizer">Organizer</Label>
-              <Controller
-                name="organizer"
-                control={control}
-                rules={{ required: "Organizer is required" }}
                 render={({ field }) => (
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select Organizer" />
+                      <SelectValue placeholder="Select Course" />
                     </SelectTrigger>
                     <SelectContent>
-                      {playersLoading ? (
-                        <SelectItem value="">Loading players...</SelectItem>
-                      ) : (
-                        players?.sort((a, b) => a.name.localeCompare(b.name)).map((player) => (
-                          <SelectItem key={player.id} value={player.id.toString()}>
-                            {player.name}
-                          </SelectItem>
-                        ))
-                      )}
+                      {/* Replace this with actual course data */}
+                      <SelectItem value="1">Course 1</SelectItem>
+                      <SelectItem value="2">Course 2</SelectItem>
+                      <SelectItem value="3">Course 3</SelectItem>
                     </SelectContent>
                   </Select>
                 )}
               />
-              {errors.organizer && <span className="text-red-500 text-sm">{errors.organizer.message}</span>}
+              {errors.course && <span className="text-red-500 text-sm">{errors.course.message}</span>}
             </div>
-            <Button type="submit" className="w-full bg-[#006747] hover:bg-[#005236] text-white">Add Tee Time</Button>
+            <Button type="submit" className="w-full bg-[#006747] hover:bg-[#005236] text-white">
+              Add Tee Time
+            </Button>
           </form>
         </CardContent>
       </Card>
