@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { format, parseISO } from 'date-fns';
+import { format, parseISO, isFuture } from 'date-fns';
 import { useTeeTimes, useJoinTeeTime } from '../integrations/supabase/hooks/useTeeTimes';
 import { usePlayers } from '../integrations/supabase/hooks/players';
 import { useSupabaseAuth } from '../integrations/supabase/auth';
@@ -68,44 +68,49 @@ const Schedule = () => {
     }
   };
 
-  console.log('Tee times:', teeTimes);
+  // Filter out past tee times
+  const upcomingTeeTimes = teeTimes.filter(teeTime => isFuture(parseISO(teeTime.date_time)));
 
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-[#006747] mb-6" style={{ fontWeight: 500, fontSize: '18px' }}>Upcoming Tee Times</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {teeTimes && teeTimes.map((teeTime) => (
-          <Card key={teeTime.id} className="bg-white shadow-lg border-none">
-            <CardContent className="p-6">
-              <h2 className="text-[#006747] mb-2" style={{ fontWeight: 500, fontSize: '18px' }}>
-                {teeTime.course?.name || 'Location not specified'}
-              </h2>
-              <p className="text-gray-600 mb-4">
-                {formatDate(teeTime.date_time)} at {formatTime(teeTime.date_time)}
-              </p>
-              <ul className="space-y-2 mb-4">
-                {Array.from({ length: teeTime.max_players || 4 }).map((_, idx) => (
-                  <li key={idx} className="font-medium">
-                    {teeTime.attendees && teeTime.attendees[idx] ? (
-                      teeTime.attendees[idx].player.name
-                    ) : (
-                      <Button 
-                        onClick={() => handleJoinClick(teeTime)} 
-                        variant="outline" 
-                        size="sm"
-                        className="w-full text-[#006747] border-[#006747] hover:bg-[#006747] hover:text-white"
-                      >
-                        <PlusCircle className="mr-2 h-4 w-4" />
-                        Add Player
-                      </Button>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      {upcomingTeeTimes.length === 0 ? (
+        <p className="text-center text-gray-500">No upcoming tee times available.</p>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {upcomingTeeTimes.map((teeTime) => (
+            <Card key={teeTime.id} className="bg-white shadow-lg border-none">
+              <CardContent className="p-6">
+                <h2 className="text-[#006747] mb-2" style={{ fontWeight: 500, fontSize: '18px' }}>
+                  {teeTime.course?.name || 'Location not specified'}
+                </h2>
+                <p className="text-gray-600 mb-4">
+                  {formatDate(teeTime.date_time)} at {formatTime(teeTime.date_time)}
+                </p>
+                <ul className="space-y-2 mb-4">
+                  {Array.from({ length: teeTime.max_players || 4 }).map((_, idx) => (
+                    <li key={idx} className="font-medium">
+                      {teeTime.attendees && teeTime.attendees[idx] ? (
+                        teeTime.attendees[idx].player.name
+                      ) : (
+                        <Button 
+                          onClick={() => handleJoinClick(teeTime)} 
+                          variant="outline" 
+                          size="sm"
+                          className="w-full text-[#006747] border-[#006747] hover:bg-[#006747] hover:text-white"
+                        >
+                          <PlusCircle className="mr-2 h-4 w-4" />
+                          Add Player
+                        </Button>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
 
       <Dialog open={confirmJoinDialog.isOpen} onOpenChange={(isOpen) => setConfirmJoinDialog(prev => ({ ...prev, isOpen }))}>
         <DialogContent>
