@@ -6,18 +6,22 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
+import { useAddCourse } from '../integrations/supabase/hooks/courses';
 
 const AddCourse = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const navigate = useNavigate();
+  const addCourseMutation = useAddCourse();
 
-  const onSubmit = (data) => {
-    // In a real application, this would be an API call
-    const existingCourses = JSON.parse(localStorage.getItem('courses') || '[]');
-    const newCourse = { ...data, id: Date.now() };
-    localStorage.setItem('courses', JSON.stringify([...existingCourses, newCourse]));
-    toast.success("Course added successfully!");
-    navigate('/schedule');
+  const onSubmit = async (data) => {
+    try {
+      await addCourseMutation.mutateAsync(data);
+      toast.success("Course added successfully!");
+      navigate('/schedule');
+    } catch (error) {
+      console.error("Error adding course:", error);
+      toast.error("Failed to add course. Please try again.");
+    }
   };
 
   return (
@@ -38,13 +42,22 @@ const AddCourse = () => {
               {errors.name && <span className="text-red-500 text-sm">{errors.name.message}</span>}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="location">Location</Label>
+              <Label htmlFor="city">City</Label>
               <Input
-                id="location"
-                {...register("location", { required: "Location is required" })}
+                id="city"
+                {...register("city", { required: "City is required" })}
                 className="w-full"
               />
-              {errors.location && <span className="text-red-500 text-sm">{errors.location.message}</span>}
+              {errors.city && <span className="text-red-500 text-sm">{errors.city.message}</span>}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="state">State</Label>
+              <Input
+                id="state"
+                {...register("state", { required: "State is required" })}
+                className="w-full"
+              />
+              {errors.state && <span className="text-red-500 text-sm">{errors.state.message}</span>}
             </div>
             <Button type="submit" className="w-full bg-green-800 hover:bg-green-700">Add Course</Button>
           </form>

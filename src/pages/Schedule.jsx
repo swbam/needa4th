@@ -51,14 +51,24 @@ const Schedule = () => {
   const formatDate = (dateString) => {
     if (!dateString) return 'Date not available';
     try {
-      return format(parseISO(dateString), 'M/d/yyyy');
+      return format(parseISO(dateString), 'MMM d, yyyy');
     } catch (error) {
       console.error('Error parsing date:', error);
       return 'Invalid date';
     }
   };
 
-  console.log('Tee times:', teeTimes); // Add this line for debugging
+  const formatTime = (timeString) => {
+    if (!timeString) return 'Time not specified';
+    try {
+      return format(parseISO(`2000-01-01T${timeString}`), 'h:mm a');
+    } catch (error) {
+      console.error('Error parsing time:', error);
+      return timeString;
+    }
+  };
+
+  console.log('Tee times:', teeTimes);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -71,7 +81,7 @@ const Schedule = () => {
                 {teeTime.course?.name || 'Location not specified'}
               </h2>
               <p className="text-gray-600 mb-4">
-                {formatDate(teeTime.date)} at {teeTime.time || 'Time not specified'}
+                {formatDate(teeTime.date_time)} at {formatTime(teeTime.date_time)}
               </p>
               <ul className="space-y-2 mb-4">
                 {Array.from({ length: teeTime.max_players || 4 }).map((_, idx) => (

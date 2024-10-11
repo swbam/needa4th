@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Calendar, Clock, UserPlus, PlusCircle } from 'lucide-react';
+import { Calendar, Clock, PlusCircle, MapPin } from 'lucide-react';
 
 const BottomNav = () => {
   const location = useLocation();
@@ -9,7 +9,7 @@ const BottomNav = () => {
     { to: "/schedule", icon: Calendar, label: "Schedule" },
     { to: "/past", icon: Clock, label: "Past" },
     { to: "/add-tee-time", icon: PlusCircle, label: "Add Tee Time" },
-    { to: "/profile", icon: UserPlus, label: "Profile" },
+    { to: "/add-course", icon: MapPin, label: "Add Course" },
   ];
 
   return (
