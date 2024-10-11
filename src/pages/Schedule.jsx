@@ -2,19 +2,24 @@ import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { format, parseISO } from 'date-fns';
 import { useTeeTimes, useJoinTeeTime } from '../integrations/supabase/hooks/useTeeTimes';
+import { usePlayers } from '../integrations/supabase/hooks/players';
 import { useSupabaseAuth } from '../integrations/supabase/auth';
 import { toast } from "sonner";
+import { PlusCircle } from 'lucide-react';
 
 const Schedule = () => {
-  const { data: teeTimes, isLoading, error } = useTeeTimes();
+  const { data: teeTimes, isLoading: teeTimesLoading, error: teeTimesError } = useTeeTimes();
+  const { data: players, isLoading: playersLoading, error: playersError } = usePlayers();
   const joinTeeTimeMutation = useJoinTeeTime();
   const { user } = useSupabaseAuth();
   const [confirmJoinDialog, setConfirmJoinDialog] = useState({ isOpen: false, teeTime: null });
+  const [selectedPlayer, setSelectedPlayer] = useState(null);
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
+  if (teeTimesLoading || playersLoading) return <div>Loading...</div>;
+  if (teeTimesError || playersError) return <div>Error: {teeTimesError?.message || playersError?.message}</div>;
 
   const handleJoinClick = (teeTime) => {
     setConfirmJoinDialog({ isOpen: true, teeTime });
@@ -25,11 +30,21 @@ const Schedule = () => {
       toast.error("Please sign in to join a tee time.");
       return;
     }
+    if (!selectedPlayer) {
+      toast.error("Please select a player.");
+      return;
+    }
     try {
-      await joinTeeTimeMutation.mutateAsync({ teeTimeId: confirmJoinDialog.teeTime.id, userId: user.id });
+      await joinTeeTimeMutation.mutateAsync({ 
+        teeTimeId: confirmJoinDialog.teeTime.id, 
+        playerId: selectedPlayer 
+      });
       setConfirmJoinDialog({ isOpen: false, teeTime: null });
+      setSelectedPlayer(null);
+      toast.success("Successfully joined the tee time!");
     } catch (error) {
       console.error("Error joining tee time:", error);
+      toast.error("Failed to join the tee time. Please try again.");
     }
   };
 
@@ -66,7 +81,8 @@ const Schedule = () => {
                         size="sm"
                         className="w-full text-[#006747] border-[#006747] hover:bg-[#006747] hover:text-white"
                       >
-                        Join
+                        <PlusCircle className="mr-2 h-4 w-4" />
+                        Add Player
                       </Button>
                     )}
                   </li>
@@ -82,11 +98,24 @@ const Schedule = () => {
           <DialogHeader>
             <DialogTitle>Join Tee Time</DialogTitle>
             <DialogDescription>
-              Are you sure you want to join this tee time?
+              Select a player to join this tee time.
             </DialogDescription>
           </DialogHeader>
+          <Select onValueChange={setSelectedPlayer} value={selectedPlayer}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select a player" />
+            </SelectTrigger>
+            <SelectContent>
+              {players && players.map((player) => (
+                <SelectItem key={player.id} value={player.id}>{player.name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setConfirmJoinDialog({ isOpen: false, teeTime: null })}>
+            <Button variant="outline" onClick={() => {
+              setConfirmJoinDialog({ isOpen: false, teeTime: null });
+              setSelectedPlayer(null);
+            }}>
               Cancel
             </Button>
             <Button onClick={handleConfirmJoin} className="bg-[#006747] hover:bg-[#005236]">

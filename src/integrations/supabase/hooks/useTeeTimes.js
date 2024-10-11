@@ -2,10 +2,22 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../supabase';
 import { toast } from "sonner";
 
+const fromSupabase = async (query) => {
+    const { data, error } = await query;
+    if (error) throw new Error(error.message);
+    return data;
+};
+
 export const useTeeTimes = () => useQuery({
     queryKey: ['tee_times'],
     queryFn: async () => {
-        const { data, error } = await supabase.from('tee_times').select('*');
+        const { data, error } = await supabase
+            .from('tee_times')
+            .select(`
+                *,
+                course:courses(name),
+                attendees:players_tee_times(player:players(id, name))
+            `);
         if (error) throw error;
         return data;
     },
@@ -71,10 +83,10 @@ export const useDeleteTeeTime = () => {
 export const useJoinTeeTime = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: async ({ teeTimeId, userId }) => {
+        mutationFn: async ({ teeTimeId, playerId }) => {
             const { data, error } = await supabase
-                .from('tee_time_attendees')
-                .insert({ tee_time_id: teeTimeId, user_id: userId })
+                .from('players_tee_times')
+                .insert({ tee_time_id: teeTimeId, player_id: playerId })
                 .single();
             if (error) throw error;
             return data;
