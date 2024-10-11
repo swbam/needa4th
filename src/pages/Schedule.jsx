@@ -87,8 +87,11 @@ const Schedule = () => {
                 <p className="text-gray-600 mb-4">
                   {formatDate(teeTime.date_time)} at {formatTime(teeTime.date_time)}
                 </p>
+                <p className="font-medium mb-2">
+                  {players.find(p => p.id === teeTime.organizer_id)?.name || 'Unknown'} - OG
+                </p>
                 <ul className="space-y-2 mb-4">
-                  {Array.from({ length: teeTime.max_players || 4 }).map((_, idx) => (
+                  {Array.from({ length: 3 }).map((_, idx) => (
                     <li key={idx} className="font-medium">
                       {teeTime.attendees && teeTime.attendees[idx] ? (
                         teeTime.attendees[idx].player.name

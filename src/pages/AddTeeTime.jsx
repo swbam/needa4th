@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { DatePicker } from "@/components/ui/date-picker";
 import { useAddTeeTime, testAddTeeTimeAndPlayer } from '../integrations/supabase/hooks/useTeeTimes';
 import { useSupabaseAuth } from '../integrations/supabase/auth';
+import { usePlayers } from '../integrations/supabase/hooks/players';
 import { toast } from "sonner";
 
 const AddTeeTime = () => {
@@ -16,6 +17,7 @@ const AddTeeTime = () => {
   const navigate = useNavigate();
   const addTeeTimeMutation = useAddTeeTime();
   const { user } = useSupabaseAuth();
+  const { data: players, isLoading: playersLoading } = usePlayers();
 
   const onSubmit = async (data) => {
     if (!user) {
@@ -89,25 +91,31 @@ const AddTeeTime = () => {
               {errors.location && <span className="text-red-500 text-sm">{errors.location.message}</span>}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="walk_ride">Walk/Ride</Label>
+              <Label htmlFor="organizer">Organizer</Label>
               <Controller
-                name="walk_ride"
+                name="organizer"
                 control={control}
-                rules={{ required: "Walk/Ride is required" }}
+                rules={{ required: "Organizer is required" }}
                 render={({ field }) => (
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select Walk/Ride" />
+                      <SelectValue placeholder="Select Organizer" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="walk">Walk</SelectItem>
-                      <SelectItem value="ride">Ride</SelectItem>
-                      <SelectItem value="either">Either</SelectItem>
+                      {playersLoading ? (
+                        <SelectItem value="">Loading players...</SelectItem>
+                      ) : (
+                        players?.map((player) => (
+                          <SelectItem key={player.id} value={player.id.toString()}>
+                            {player.name}
+                          </SelectItem>
+                        ))
+                      )}
                     </SelectContent>
                   </Select>
                 )}
               />
-              {errors.walk_ride && <span className="text-red-500 text-sm">{errors.walk_ride.message}</span>}
+              {errors.organizer && <span className="text-red-500 text-sm">{errors.organizer.message}</span>}
             </div>
             <Button type="submit" className="w-full bg-green-800 hover:bg-green-700">Add Tee Time</Button>
           </form>
