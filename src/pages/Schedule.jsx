@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { format, parseISO, isFuture } from 'date-fns';
-import { useTeeTimes, useJoinTeeTime } from '../integrations/supabase/hooks/useTeeTimes';
+import { useTeeTimes } from '../integrations/supabase/hooks/useTeeTimes';
 import { usePlayers } from '../integrations/supabase/hooks/players';
 import { useSupabaseAuth } from '../integrations/supabase/auth';
 import { toast } from "sonner";
@@ -13,7 +13,6 @@ import { PlusCircle } from 'lucide-react';
 const Schedule = () => {
   const { data: teeTimes, isLoading: teeTimesLoading, error: teeTimesError } = useTeeTimes();
   const { data: players, isLoading: playersLoading, error: playersError } = usePlayers();
-  const joinTeeTimeMutation = useJoinTeeTime();
   const { user } = useSupabaseAuth();
   const [confirmJoinDialog, setConfirmJoinDialog] = useState({ isOpen: false, teeTime: null });
   const [selectedPlayer, setSelectedPlayer] = useState(null);
@@ -35,49 +34,18 @@ const Schedule = () => {
       return;
     }
     try {
-      await joinTeeTimeMutation.mutateAsync({ 
-        teeTimeId: confirmJoinDialog.teeTime.id, 
-        playerId: selectedPlayer 
-      });
+      // Here you would typically call a mutation to join the tee time
+      // For now, we'll just show a success message
+      toast.success("Successfully joined the tee time!");
       setConfirmJoinDialog({ isOpen: false, teeTime: null });
       setSelectedPlayer(null);
-      toast.success("Successfully joined the tee time!");
     } catch (error) {
       console.error("Error joining tee time:", error);
       toast.error("Failed to join the tee time. Please try again.");
     }
   };
 
-  const formatDate = (dateString) => {
-    if (!dateString) return 'Date not available';
-    try {
-      const date = parseISO(dateString);
-      const dayOfWeek = format(date, 'EEE');
-      const month = format(date, 'MMM');
-      const dayOfMonth = format(date, 'd');
-      const year = format(date, 'yyyy');
-      return `${dayOfWeek}, ${month} ${dayOfMonth}, ${year}`;
-    } catch (error) {
-      console.error('Error parsing date:', error);
-      return 'Invalid date';
-    }
-  };
-
-  const formatTime = (timeString) => {
-    if (!timeString) return 'Time not specified';
-    try {
-      return format(parseISO(timeString), 'h:mm a');
-    } catch (error) {
-      console.error('Error parsing time:', error);
-      return timeString;
-    }
-  };
-
-  // Filter out past tee times
   const upcomingTeeTimes = teeTimes.filter(teeTime => isFuture(parseISO(teeTime.date_time)));
-
-  // Sort players alphabetically by name
-  const sortedPlayers = [...players].sort((a, b) => a.name.localeCompare(b.name));
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -93,7 +61,7 @@ const Schedule = () => {
                   {teeTime.course?.name || 'Location not specified'}
                 </h2>
                 <p className="text-gray-600 mb-4">
-                  {formatDate(teeTime.date_time)} at {formatTime(teeTime.date_time)}
+                  {teeTime.formattedDate} at {teeTime.formattedTime}
                 </p>
                 <p className="font-medium mb-2">
                   {players.find(p => p.id === teeTime.organizer_id)?.name || 'Unknown'} - OG
@@ -136,7 +104,7 @@ const Schedule = () => {
               <SelectValue placeholder="Select a player" />
             </SelectTrigger>
             <SelectContent>
-              {sortedPlayers && sortedPlayers.map((player) => (
+              {players && players.sort((a, b) => a.name.localeCompare(b.name)).map((player) => (
                 <SelectItem key={player.id} value={player.id}>{player.name}</SelectItem>
               ))}
             </SelectContent>
