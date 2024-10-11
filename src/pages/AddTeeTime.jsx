@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DatePicker } from "@/components/ui/date-picker";
-import { useAddTeeTime, testAddTeeTimeAndPlayer } from '../integrations/supabase/hooks/useTeeTimes';
+import { useAddTeeTime } from '../integrations/supabase/hooks/useTeeTimes';
 import { useSupabaseAuth } from '../integrations/supabase/auth';
 import { usePlayers } from '../integrations/supabase/hooks/players';
 import { toast } from "sonner";
@@ -36,22 +36,11 @@ const AddTeeTime = () => {
     }
   };
 
-  const handleTestAddTeeTimeAndPlayer = async () => {
-    try {
-      const result = await testAddTeeTimeAndPlayer();
-      console.log('Test result:', result);
-      toast.success("Test completed successfully. Check console for details.");
-    } catch (error) {
-      console.error('Test failed:', error);
-      toast.error("Test failed. Check console for details.");
-    }
-  };
-
   return (
     <div className="container mx-auto px-4 py-8">
       <Card className="max-w-md mx-auto">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold text-green-800">Add Tee Time</CardTitle>
+          <CardTitle className="text-2xl font-bold text-[#006747]">Add Tee Time</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -105,7 +94,7 @@ const AddTeeTime = () => {
                       {playersLoading ? (
                         <SelectItem value="">Loading players...</SelectItem>
                       ) : (
-                        players?.map((player) => (
+                        players?.sort((a, b) => a.name.localeCompare(b.name)).map((player) => (
                           <SelectItem key={player.id} value={player.id.toString()}>
                             {player.name}
                           </SelectItem>
@@ -117,11 +106,8 @@ const AddTeeTime = () => {
               />
               {errors.organizer && <span className="text-red-500 text-sm">{errors.organizer.message}</span>}
             </div>
-            <Button type="submit" className="w-full bg-green-800 hover:bg-green-700">Add Tee Time</Button>
+            <Button type="submit" className="w-full bg-[#006747] hover:bg-[#005236] text-white">Add Tee Time</Button>
           </form>
-          <Button onClick={handleTestAddTeeTimeAndPlayer} className="w-full mt-4 bg-blue-500 hover:bg-blue-400">
-            Run Test: Add Tee Time and Player
-          </Button>
         </CardContent>
       </Card>
     </div>
