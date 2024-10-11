@@ -48,7 +48,7 @@ const Schedule = () => {
   const upcomingTeeTimes = teeTimes.filter(teeTime => isFuture(parseISO(teeTime.date_time)));
 
   return (
-    <div className="pt-14"> {/* Add top padding to account for fixed navbar */}
+    <div className="pt-14">
       <div className="bg-white w-full py-4 shadow-sm">
         <h1 className="text-[#006747] text-center font-semibold text-xl">Upcoming Tee Times</h1>
       </div>
@@ -105,7 +105,7 @@ const Schedule = () => {
           </DialogHeader>
           <Select onValueChange={setSelectedPlayer} value={selectedPlayer}>
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select a player" />
+              <SelectValue placeholder="Select your name" />
             </SelectTrigger>
             <SelectContent>
               {players && players.sort((a, b) => a.name.localeCompare(b.name)).map((player) => (
