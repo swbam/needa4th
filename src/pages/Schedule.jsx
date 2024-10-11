@@ -51,7 +51,12 @@ const Schedule = () => {
   const formatDate = (dateString) => {
     if (!dateString) return 'Date not available';
     try {
-      return format(parseISO(dateString), 'MMM d, yyyy');
+      const date = parseISO(dateString);
+      const dayOfWeek = format(date, 'EEE');
+      const month = format(date, 'MMM');
+      const dayOfMonth = format(date, 'd');
+      const year = format(date, 'yyyy');
+      return `${dayOfWeek}, ${month} ${dayOfMonth}, ${year}`;
     } catch (error) {
       console.error('Error parsing date:', error);
       return 'Invalid date';
@@ -61,7 +66,7 @@ const Schedule = () => {
   const formatTime = (timeString) => {
     if (!timeString) return 'Time not specified';
     try {
-      return format(parseISO(`2000-01-01T${timeString}`), 'h:mm a');
+      return format(parseISO(timeString), 'h:mm a');
     } catch (error) {
       console.error('Error parsing time:', error);
       return timeString;
@@ -70,6 +75,9 @@ const Schedule = () => {
 
   // Filter out past tee times
   const upcomingTeeTimes = teeTimes.filter(teeTime => isFuture(parseISO(teeTime.date_time)));
+
+  // Sort players alphabetically by name
+  const sortedPlayers = [...players].sort((a, b) => a.name.localeCompare(b.name));
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -128,7 +136,7 @@ const Schedule = () => {
               <SelectValue placeholder="Select a player" />
             </SelectTrigger>
             <SelectContent>
-              {players && players.map((player) => (
+              {sortedPlayers && sortedPlayers.map((player) => (
                 <SelectItem key={player.id} value={player.id}>{player.name}</SelectItem>
               ))}
             </SelectContent>

@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../supabase';
 import { toast } from "sonner";
+import { format, parseISO } from 'date-fns';
 
 const fromSupabase = async (query) => {
     const { data, error } = await query;
@@ -19,8 +20,11 @@ export const useTeeTimes = () => useQuery({
                 attendees:players_tee_times(player:players(id, name))
             `);
         if (error) throw error;
-        console.log('Fetched tee times:', data);
-        return data;
+        return data.map(teeTime => ({
+            ...teeTime,
+            formattedDate: formatDate(teeTime.date_time),
+            formattedTime: formatTime(teeTime.date_time)
+        }));
     },
 });
 
@@ -100,6 +104,31 @@ export const useJoinTeeTime = () => {
             toast.error("Failed to join tee time. Please try again.");
         },
     });
+};
+
+const formatDate = (dateString) => {
+    if (!dateString) return 'Date not available';
+    try {
+        const date = parseISO(dateString);
+        const dayOfWeek = format(date, 'EEE');
+        const month = format(date, 'MMM');
+        const dayOfMonth = format(date, 'd');
+        const year = format(date, 'yyyy');
+        return `${dayOfWeek}, ${month} ${dayOfMonth}, ${year}`;
+    } catch (error) {
+        console.error('Error parsing date:', error);
+        return 'Invalid date';
+    }
+};
+
+const formatTime = (timeString) => {
+    if (!timeString) return 'Time not specified';
+    try {
+        return format(parseISO(timeString), 'h:mm a');
+    } catch (error) {
+        console.error('Error parsing time:', error);
+        return timeString;
+    }
 };
 
 // Updated function to test adding a tee time and a player
