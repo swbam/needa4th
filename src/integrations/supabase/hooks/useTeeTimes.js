@@ -19,6 +19,7 @@ export const useTeeTimes = () => useQuery({
                 attendees:players_tee_times(player:players(id, name))
             `);
         if (error) throw error;
+        console.log('Fetched tee times:', data); // Add this line for debugging
         return data;
     },
 });

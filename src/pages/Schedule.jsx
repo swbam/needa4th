@@ -58,6 +58,8 @@ const Schedule = () => {
     }
   };
 
+  console.log('Tee times:', teeTimes); // Add this line for debugging
+
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-[#006747] mb-6" style={{ fontWeight: 500, fontSize: '18px' }}>Upcoming Tee Times</h1>
@@ -65,7 +67,9 @@ const Schedule = () => {
         {teeTimes && teeTimes.map((teeTime) => (
           <Card key={teeTime.id} className="bg-white shadow-lg border-none">
             <CardContent className="p-6">
-              <h2 className="text-[#006747] mb-2" style={{ fontWeight: 500, fontSize: '18px' }}>{teeTime.location || 'Location not specified'}</h2>
+              <h2 className="text-[#006747] mb-2" style={{ fontWeight: 500, fontSize: '18px' }}>
+                {teeTime.course?.name || 'Location not specified'}
+              </h2>
               <p className="text-gray-600 mb-4">
                 {formatDate(teeTime.date)} at {teeTime.time || 'Time not specified'}
               </p>
@@ -73,7 +77,7 @@ const Schedule = () => {
                 {Array.from({ length: teeTime.max_players || 4 }).map((_, idx) => (
                   <li key={idx} className="font-medium">
                     {teeTime.attendees && teeTime.attendees[idx] ? (
-                      teeTime.attendees[idx].name
+                      teeTime.attendees[idx].player.name
                     ) : (
                       <Button 
                         onClick={() => handleJoinClick(teeTime)} 
