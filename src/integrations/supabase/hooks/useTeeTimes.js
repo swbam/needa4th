@@ -19,7 +19,7 @@ export const useTeeTimes = () => useQuery({
                 attendees:players_tee_times(player:players(id, name))
             `);
         if (error) throw error;
-        console.log('Fetched tee times:', data); // Add this line for debugging
+        console.log('Fetched tee times:', data);
         return data;
     },
 });
@@ -100,4 +100,41 @@ export const useJoinTeeTime = () => {
             toast.error("Failed to join tee time. Please try again.");
         },
     });
+};
+
+// New function to test adding a tee time and a player
+export const testAddTeeTimeAndPlayer = async () => {
+    try {
+        // Add a new tee time
+        const { data: newTeeTime, error: teeTimeError } = await supabase
+            .from('tee_times')
+            .insert({
+                date_time: new Date(Date.now() + 86400000).toISOString(), // Tomorrow
+                course_id: 1, // Assuming course with id 1 exists
+                max_players: 4
+            })
+            .single();
+
+        if (teeTimeError) throw teeTimeError;
+
+        console.log('New tee time added:', newTeeTime);
+
+        // Add a player to the tee time
+        const { data: newPlayerTeeTime, error: playerTeeTimeError } = await supabase
+            .from('players_tee_times')
+            .insert({
+                tee_time_id: newTeeTime.id,
+                player_id: 1 // Assuming player with id 1 exists
+            })
+            .single();
+
+        if (playerTeeTimeError) throw playerTeeTimeError;
+
+        console.log('Player added to tee time:', newPlayerTeeTime);
+
+        return { newTeeTime, newPlayerTeeTime };
+    } catch (error) {
+        console.error('Error in test:', error);
+        throw error;
+    }
 };

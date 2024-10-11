@@ -7,9 +7,9 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DatePicker } from "@/components/ui/date-picker";
-import { useAddTeeTime } from '../integrations/supabase/hooks/useTeeTimes';
+import { useAddTeeTime, testAddTeeTimeAndPlayer } from '../integrations/supabase/hooks/useTeeTimes';
 import { useSupabaseAuth } from '../integrations/supabase/auth';
-import { toast } from "sonner"; // Add this import
+import { toast } from "sonner";
 
 const AddTeeTime = () => {
   const { control, handleSubmit, formState: { errors } } = useForm();
@@ -31,7 +31,18 @@ const AddTeeTime = () => {
       navigate('/schedule');
     } catch (error) {
       console.error("Error adding tee time:", error);
-      toast.error("Failed to add tee time. Please try again."); // Add error toast
+      toast.error("Failed to add tee time. Please try again.");
+    }
+  };
+
+  const handleTestAddTeeTimeAndPlayer = async () => {
+    try {
+      const result = await testAddTeeTimeAndPlayer();
+      console.log('Test result:', result);
+      toast.success("Test completed successfully. Check console for details.");
+    } catch (error) {
+      console.error('Test failed:', error);
+      toast.error("Test failed. Check console for details.");
     }
   };
 
@@ -101,6 +112,9 @@ const AddTeeTime = () => {
             </div>
             <Button type="submit" className="w-full bg-green-800 hover:bg-green-700">Add Tee Time</Button>
           </form>
+          <Button onClick={handleTestAddTeeTimeAndPlayer} className="w-full mt-4 bg-blue-500 hover:bg-blue-400">
+            Run Test: Add Tee Time and Player
+          </Button>
         </CardContent>
       </Card>
     </div>
