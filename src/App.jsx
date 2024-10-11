@@ -7,7 +7,7 @@ import BottomNav from './components/BottomNav';
 import Schedule from './pages/Schedule';
 import AddTeeTime from './pages/AddTeeTime';
 import PastGames from './pages/PastGames';
-import Profile from './pages/Profile';
+import AddCourse from './pages/AddCourse';
 import AdminDashboard from './pages/AdminDashboard';
 
 const queryClient = new QueryClient();
@@ -25,7 +25,7 @@ function App() {
                 <Route path="/schedule" element={<Schedule />} />
                 <Route path="/add-tee-time" element={<AddTeeTime />} />
                 <Route path="/past" element={<PastGames />} />
-                <Route path="/profile" element={<Profile />} />
+                <Route path="/add-course" element={<AddCourse />} />
                 <Route path="/admin" element={<AdminDashboard />} />
               </Routes>
             </main>
