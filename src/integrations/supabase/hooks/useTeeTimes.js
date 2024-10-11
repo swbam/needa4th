@@ -102,7 +102,7 @@ export const useJoinTeeTime = () => {
     });
 };
 
-// New function to test adding a tee time and a player
+// Updated function to test adding a tee time and a player
 export const testAddTeeTimeAndPlayer = async () => {
     try {
         // Add a new tee time
@@ -111,7 +111,6 @@ export const testAddTeeTimeAndPlayer = async () => {
             .insert({
                 date_time: new Date(Date.now() + 86400000).toISOString(), // Tomorrow
                 course_id: 1, // Assuming course with id 1 exists
-                max_players: 4
             })
             .single();
 

@@ -26,7 +26,6 @@ const AddTeeTime = () => {
       await addTeeTimeMutation.mutateAsync({
         ...data,
         organizer_id: user.id,
-        max_players: 4, // Default value
       });
       navigate('/schedule');
     } catch (error) {
