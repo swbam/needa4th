@@ -17,8 +17,8 @@ const Schedule = () => {
   const [confirmJoinDialog, setConfirmJoinDialog] = useState({ isOpen: false, teeTime: null });
   const [selectedPlayer, setSelectedPlayer] = useState(null);
 
-  if (teeTimesLoading || playersLoading) return <div>Loading...</div>;
-  if (teeTimesError || playersError) return <div>Error: {teeTimesError?.message || playersError?.message}</div>;
+  if (teeTimesLoading || playersLoading) return <div className="pt-20">Loading...</div>;
+  if (teeTimesError || playersError) return <div className="pt-20">Error: {teeTimesError?.message || playersError?.message}</div>;
 
   const handleJoinClick = (teeTime) => {
     setConfirmJoinDialog({ isOpen: true, teeTime });
@@ -48,48 +48,52 @@ const Schedule = () => {
   const upcomingTeeTimes = teeTimes.filter(teeTime => isFuture(parseISO(teeTime.date_time)));
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-[#006747] mb-6" style={{ fontWeight: 500, fontSize: '18px' }}>Upcoming Tee Times</h1>
-      {upcomingTeeTimes.length === 0 ? (
-        <p className="text-center text-gray-500">No upcoming tee times available.</p>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {upcomingTeeTimes.map((teeTime) => (
-            <Card key={teeTime.id} className="bg-white shadow-lg border-none">
-              <CardContent className="p-6">
-                <h2 className="text-[#006747] mb-2" style={{ fontWeight: 500, fontSize: '18px' }}>
-                  {teeTime.course?.name || 'Location not specified'}
-                </h2>
-                <p className="text-gray-600 mb-4">
-                  {teeTime.formattedDate} at {teeTime.formattedTime}
-                </p>
-                <p className="font-medium mb-2">
-                  {players.find(p => p.id === teeTime.organizer_id)?.name || 'Unknown'} - OG
-                </p>
-                <ul className="space-y-2 mb-4">
-                  {Array.from({ length: 3 }).map((_, idx) => (
-                    <li key={idx} className="font-medium">
-                      {teeTime.attendees && teeTime.attendees[idx] ? (
-                        teeTime.attendees[idx].player.name
-                      ) : (
-                        <Button 
-                          onClick={() => handleJoinClick(teeTime)} 
-                          variant="outline" 
-                          size="sm"
-                          className="w-full text-[#006747] border-[#006747] hover:bg-[#006747] hover:text-white"
-                        >
-                          <PlusCircle className="mr-2 h-4 w-4" />
-                          Add Player
-                        </Button>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
+    <div className="pt-14"> {/* Add top padding to account for fixed navbar */}
+      <div className="bg-white w-full py-4 shadow-sm">
+        <h1 className="text-[#006747] text-center font-semibold text-xl">Upcoming Tee Times</h1>
+      </div>
+      <div className="container mx-auto px-4 py-6">
+        {upcomingTeeTimes.length === 0 ? (
+          <p className="text-center text-gray-500">No upcoming tee times available.</p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {upcomingTeeTimes.map((teeTime) => (
+              <Card key={teeTime.id} className="bg-white shadow-lg border-none">
+                <CardContent className="p-6">
+                  <h2 className="text-[#006747] mb-2" style={{ fontWeight: 500, fontSize: '18px' }}>
+                    {teeTime.course?.name || 'Location not specified'}
+                  </h2>
+                  <p className="text-gray-600 mb-4">
+                    {format(parseISO(teeTime.date_time), 'EEE, MMM d')} at {format(parseISO(teeTime.date_time), 'h:mm a')}
+                  </p>
+                  <p className="font-medium mb-2">
+                    {players.find(p => p.id === teeTime.organizer_id)?.name || 'Unknown'} - OG
+                  </p>
+                  <ul className="space-y-2 mb-4">
+                    {Array.from({ length: 3 }).map((_, idx) => (
+                      <li key={idx} className="font-medium">
+                        {teeTime.attendees && teeTime.attendees[idx] ? (
+                          teeTime.attendees[idx].player.name
+                        ) : (
+                          <Button 
+                            onClick={() => handleJoinClick(teeTime)} 
+                            variant="outline" 
+                            size="sm"
+                            className="w-full text-[#006747] border-[#006747] hover:bg-[#006747] hover:text-white"
+                          >
+                            <PlusCircle className="mr-2 h-4 w-4" />
+                            Add Player
+                          </Button>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
 
       <Dialog open={confirmJoinDialog.isOpen} onOpenChange={(isOpen) => setConfirmJoinDialog(prev => ({ ...prev, isOpen }))}>
         <DialogContent>
