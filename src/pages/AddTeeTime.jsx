@@ -43,7 +43,7 @@ const AddTeeTime = () => {
       };
       await addTeeTimeMutation.mutateAsync(newTeeTime);
       toast.success("Tee time added successfully!");
-      navigate('/schedule');
+      navigate('/schedule');  // Navigate to the schedule page after successful addition
     } catch (error) {
       console.error("Error adding tee time:", error);
       toast.error("Failed to add tee time. Please try again.");
