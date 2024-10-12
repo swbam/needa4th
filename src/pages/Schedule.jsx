@@ -74,7 +74,7 @@ const Schedule = () => {
                       {format(parseISO(teeTime.date_time), 'EEE, MMM d')} at {format(parseISO(teeTime.date_time), 'h:mm a')}
                     </p>
                     <p className="font-medium mb-2">
-                      {organizer ? `${organizer.name} - OG` : 'Organizer not found'}
+                      {organizer ? `${organizer.name} - Organizer` : 'Organizer not found'}
                     </p>
                     <ul className="space-y-2 mb-4">
                       {Array.from({ length: 3 }).map((_, idx) => (
