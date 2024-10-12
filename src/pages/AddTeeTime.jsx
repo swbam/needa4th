@@ -42,12 +42,15 @@ const AddTeeTime = () => {
       };
       await addTeeTimeMutation.mutateAsync(newTeeTime);
       toast.success("Tee time added successfully!");
-      navigate('/schedule');  // Navigate to the schedule page after successful addition
+      navigate('/schedule');
     } catch (error) {
       console.error("Error adding tee time:", error);
       toast.error("Failed to add tee time. Please try again.");
     }
   };
+
+  // Sort courses alphabetically
+  const sortedCourses = courses?.sort((a, b) => a.name.localeCompare(b.name)) || [];
 
   return (
     <div className="pt-14">
@@ -100,7 +103,7 @@ const AddTeeTime = () => {
                         {coursesLoading ? (
                           <SelectItem value="loading">Loading courses...</SelectItem>
                         ) : (
-                          courses?.map((course) => (
+                          sortedCourses.map((course) => (
                             <SelectItem key={course.id} value={course.id.toString()}>
                               {course.name}
                             </SelectItem>
