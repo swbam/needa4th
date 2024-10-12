@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { DatePicker } from "@/components/ui/date-picker";
 import { useAddTeeTime } from '../integrations/supabase/hooks/useTeeTimes';
 import { useSupabaseAuth } from '../integrations/supabase/auth';
 import { useCourses } from '../integrations/supabase/hooks/courses';
@@ -66,9 +65,11 @@ const AddTeeTime = () => {
                   control={control}
                   rules={{ required: "Date is required" }}
                   render={({ field }) => (
-                    <DatePicker
-                      date={field.value}
-                      onDateChange={field.onChange}
+                    <Input
+                      type="date"
+                      id="date"
+                      {...field}
+                      className="w-full"
                     />
                   )}
                 />
