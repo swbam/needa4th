@@ -16,7 +16,7 @@ export const useTeeTimes = () => useQuery({
             .from('tee_times')
             .select(`
                 *,
-                course:courses(name),
+                course:courses(id, name),
                 attendees:players_tee_times(player:players(id, name))
             `);
         if (error) throw error;

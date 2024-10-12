@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { format, parseISO, isFuture } from 'date-fns';
-import { useTeeTimes } from '../integrations/supabase/hooks/useTeeTimes';
+import { useTeeTimes, useUpdateTeeTime } from '../integrations/supabase/hooks/useTeeTimes';
 import { usePlayers } from '../integrations/supabase/hooks/players';
 import { useSupabaseAuth } from '../integrations/supabase/auth';
 import { toast } from "sonner";
@@ -16,6 +16,7 @@ const Schedule = () => {
   const { user } = useSupabaseAuth();
   const [confirmJoinDialog, setConfirmJoinDialog] = useState({ isOpen: false, teeTime: null });
   const [selectedPlayer, setSelectedPlayer] = useState(null);
+  const updateTeeMutation = useUpdateTeeTime();
 
   if (teeTimesLoading || playersLoading) return <div className="pt-20">Loading...</div>;
   if (teeTimesError || playersError) return <div className="pt-20">Error: {teeTimesError?.message || playersError?.message}</div>;
@@ -34,8 +35,14 @@ const Schedule = () => {
       return;
     }
     try {
-      // Here you would typically call a mutation to join the tee time
-      // For now, we'll just show a success message
+      const updatedAttendees = [
+        ...(confirmJoinDialog.teeTime.attendees || []),
+        { player: { id: selectedPlayer, name: players.find(p => p.id === selectedPlayer)?.name } }
+      ];
+      await updateTeeMutation.mutateAsync({
+        id: confirmJoinDialog.teeTime.id,
+        attendees: updatedAttendees
+      });
       toast.success("Successfully joined the tee time!");
       setConfirmJoinDialog({ isOpen: false, teeTime: null });
       setSelectedPlayer(null);
@@ -45,7 +52,7 @@ const Schedule = () => {
     }
   };
 
-  const upcomingTeeTimes = teeTimes.filter(teeTime => isFuture(parseISO(teeTime.date_time)));
+  const upcomingTeeTimes = teeTimes?.filter(teeTime => isFuture(parseISO(teeTime.date_time))) || [];
 
   return (
     <div className="pt-14">
@@ -58,7 +65,7 @@ const Schedule = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {upcomingTeeTimes.map((teeTime) => {
-              const organizer = players.find(p => p.id === teeTime.organizer_id);
+              const organizer = players?.find(p => p.id === teeTime.organizer_id);
               const uniqueAttendees = teeTime.attendees ? 
                 [...new Set(teeTime.attendees.map(a => a.player.id))].map(id => 
                   teeTime.attendees.find(a => a.player.id === id).player

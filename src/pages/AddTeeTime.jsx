@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { DatePicker } from "@/components/ui/date-picker";
 import { useAddTeeTime } from '../integrations/supabase/hooks/useTeeTimes';
 import { useSupabaseAuth } from '../integrations/supabase/auth';
-import { usePlayers } from '../integrations/supabase/hooks/players';
+import { useCourses } from '../integrations/supabase/hooks/courses';
 import { toast } from "sonner";
 import { format } from 'date-fns';
 
@@ -18,7 +18,7 @@ const AddTeeTime = () => {
   const navigate = useNavigate();
   const addTeeTimeMutation = useAddTeeTime();
   const { user } = useSupabaseAuth();
-  const { data: players, isLoading: playersLoading } = usePlayers();
+  const { data: courses, isLoading: coursesLoading } = useCourses();
 
   const onSubmit = async (data) => {
     if (!user) {
@@ -87,10 +87,15 @@ const AddTeeTime = () => {
                         <SelectValue placeholder="Select Course" />
                       </SelectTrigger>
                       <SelectContent>
-                        {/* Replace this with actual course data */}
-                        <SelectItem value="1">Course 1</SelectItem>
-                        <SelectItem value="2">Course 2</SelectItem>
-                        <SelectItem value="3">Course 3</SelectItem>
+                        {coursesLoading ? (
+                          <SelectItem value="">Loading courses...</SelectItem>
+                        ) : (
+                          courses?.map((course) => (
+                            <SelectItem key={course.id} value={course.id.toString()}>
+                              {course.name}
+                            </SelectItem>
+                          ))
+                        )}
                       </SelectContent>
                     </Select>
                   )}
