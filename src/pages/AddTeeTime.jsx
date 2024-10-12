@@ -97,7 +97,7 @@ const AddTeeTime = () => {
                       </SelectTrigger>
                       <SelectContent>
                         {coursesLoading ? (
-                          <SelectItem value="">Loading courses...</SelectItem>
+                          <SelectItem value="loading">Loading courses...</SelectItem>
                         ) : (
                           courses?.map((course) => (
                             <SelectItem key={course.id} value={course.id.toString()}>
