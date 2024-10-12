@@ -133,7 +133,7 @@ const Schedule = () => {
           </DialogHeader>
           <Select onValueChange={setSelectedPlayer} value={selectedPlayer}>
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select Existing Player" />
+              <SelectValue placeholder="Select Your Name" />
             </SelectTrigger>
             <SelectContent>
               {players && players.sort((a, b) => a.name.localeCompare(b.name)).map((player) => (
@@ -143,7 +143,7 @@ const Schedule = () => {
           </Select>
           <Input
             type="text"
-            placeholder="Or enter new player name"
+            placeholder="Add New Player"
             value={newPlayerName}
             onChange={(e) => setNewPlayerName(e.target.value)}
           />
