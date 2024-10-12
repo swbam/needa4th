@@ -105,7 +105,7 @@ const Schedule = () => {
           </DialogHeader>
           <Select onValueChange={setSelectedPlayer} value={selectedPlayer}>
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select your name" />
+              <SelectValue placeholder="Select Your Name" />
             </SelectTrigger>
             <SelectContent>
               {players && players.sort((a, b) => a.name.localeCompare(b.name)).map((player) => (
