@@ -57,40 +57,48 @@ const Schedule = () => {
           <p className="text-center text-gray-500">No upcoming tee times available.</p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {upcomingTeeTimes.map((teeTime) => (
-              <Card key={teeTime.id} className="bg-white shadow-lg border-none">
-                <CardContent className="p-6">
-                  <h2 className="text-[#006747] mb-2" style={{ fontWeight: 500, fontSize: '18px' }}>
-                    {teeTime.course?.name || 'Location not specified'}
-                  </h2>
-                  <p className="text-gray-600 mb-4">
-                    {format(parseISO(teeTime.date_time), 'EEE, MMM d')} at {format(parseISO(teeTime.date_time), 'h:mm a')}
-                  </p>
-                  <p className="font-medium mb-2">
-                    {players.find(p => p.id === teeTime.organizer_id)?.name || 'Unknown'} - OG
-                  </p>
-                  <ul className="space-y-2 mb-4">
-                    {Array.from({ length: 3 }).map((_, idx) => (
-                      <li key={idx} className="font-medium">
-                        {teeTime.attendees && teeTime.attendees[idx] ? (
-                          teeTime.attendees[idx].player.name
-                        ) : (
-                          <Button 
-                            onClick={() => handleJoinClick(teeTime)} 
-                            variant="outline" 
-                            size="sm"
-                            className="w-full text-[#006747] border-[#006747] hover:bg-[#006747] hover:text-white"
-                          >
-                            <PlusCircle className="mr-2 h-4 w-4" />
-                            Add Player
-                          </Button>
-                        )}
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
-            ))}
+            {upcomingTeeTimes.map((teeTime) => {
+              const organizer = players.find(p => p.id === teeTime.organizer_id);
+              const uniqueAttendees = teeTime.attendees ? 
+                [...new Set(teeTime.attendees.map(a => a.player.id))].map(id => 
+                  teeTime.attendees.find(a => a.player.id === id).player
+                ) : [];
+
+              return (
+                <Card key={teeTime.id} className="bg-white shadow-lg border-none">
+                  <CardContent className="p-6">
+                    <h2 className="text-[#006747] mb-2" style={{ fontWeight: 500, fontSize: '18px' }}>
+                      {teeTime.course?.name || 'Location not specified'}
+                    </h2>
+                    <p className="text-gray-600 mb-4">
+                      {format(parseISO(teeTime.date_time), 'EEE, MMM d')} at {format(parseISO(teeTime.date_time), 'h:mm a')}
+                    </p>
+                    <p className="font-medium mb-2">
+                      {organizer ? `${organizer.name} - OG` : 'Organizer not found'}
+                    </p>
+                    <ul className="space-y-2 mb-4">
+                      {Array.from({ length: 3 }).map((_, idx) => (
+                        <li key={idx} className="font-medium">
+                          {uniqueAttendees[idx] ? (
+                            uniqueAttendees[idx].name
+                          ) : (
+                            <Button 
+                              onClick={() => handleJoinClick(teeTime)} 
+                              variant="outline" 
+                              size="sm"
+                              className="w-full text-[#006747] border-[#006747] hover:bg-[#006747] hover:text-white"
+                            >
+                              <PlusCircle className="mr-2 h-4 w-4" />
+                              Add Player
+                            </Button>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         )}
       </div>
