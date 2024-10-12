@@ -32,7 +32,7 @@ export const usePlayers = () => useQuery({
 export const useAddPlayer = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (newPlayer) => fromSupabase(supabase.from('players').insert([newPlayer])),
+        mutationFn: (newPlayer) => fromSupabase(supabase.from('players').insert([newPlayer]).select().single()),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['players'] });
         },

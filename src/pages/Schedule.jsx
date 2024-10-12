@@ -3,9 +3,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import { format, parseISO, isFuture } from 'date-fns';
 import { useTeeTimes, useUpdateTeeTime } from '../integrations/supabase/hooks/useTeeTimes';
-import { usePlayers } from '../integrations/supabase/hooks/players';
+import { usePlayers, useAddPlayer } from '../integrations/supabase/hooks/players';
 import { useSupabaseAuth } from '../integrations/supabase/auth';
 import { toast } from "sonner";
 import { PlusCircle } from 'lucide-react';
@@ -16,7 +17,9 @@ const Schedule = () => {
   const { user } = useSupabaseAuth();
   const [confirmJoinDialog, setConfirmJoinDialog] = useState({ isOpen: false, teeTime: null });
   const [selectedPlayer, setSelectedPlayer] = useState(null);
+  const [newPlayerName, setNewPlayerName] = useState('');
   const updateTeeMutation = useUpdateTeeTime();
+  const addPlayerMutation = useAddPlayer();
 
   if (teeTimesLoading || playersLoading) return <div className="pt-20">Loading...</div>;
   if (teeTimesError || playersError) return <div className="pt-20">Error: {teeTimesError?.message || playersError?.message}</div>;
@@ -30,14 +33,23 @@ const Schedule = () => {
       toast.error("Please sign in to join a tee time.");
       return;
     }
-    if (!selectedPlayer) {
-      toast.error("Please select a player.");
+    if (!selectedPlayer && !newPlayerName.trim()) {
+      toast.error("Please select a player or enter a new player name.");
       return;
     }
     try {
+      let playerToAdd;
+      if (newPlayerName.trim()) {
+        // Add new player to Supabase
+        const { data: newPlayer } = await addPlayerMutation.mutateAsync({ name: newPlayerName.trim() });
+        playerToAdd = newPlayer;
+      } else {
+        playerToAdd = players.find(p => p.id === selectedPlayer);
+      }
+
       const updatedAttendees = [
         ...(confirmJoinDialog.teeTime.attendees || []),
-        { player: { id: selectedPlayer, name: players.find(p => p.id === selectedPlayer)?.name } }
+        { player: { id: playerToAdd.id, name: playerToAdd.name } }
       ];
       await updateTeeMutation.mutateAsync({
         id: confirmJoinDialog.teeTime.id,
@@ -46,6 +58,7 @@ const Schedule = () => {
       toast.success("Successfully joined the tee time!");
       setConfirmJoinDialog({ isOpen: false, teeTime: null });
       setSelectedPlayer(null);
+      setNewPlayerName('');
     } catch (error) {
       console.error("Error joining tee time:", error);
       toast.error("Failed to join the tee time. Please try again.");
@@ -115,12 +128,12 @@ const Schedule = () => {
           <DialogHeader>
             <DialogTitle>Join Tee Time</DialogTitle>
             <DialogDescription>
-              Select a player to join this tee time.
+              Select an existing player or add a new one to join this tee time.
             </DialogDescription>
           </DialogHeader>
           <Select onValueChange={setSelectedPlayer} value={selectedPlayer}>
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select Your Name" />
+              <SelectValue placeholder="Select Existing Player" />
             </SelectTrigger>
             <SelectContent>
               {players && players.sort((a, b) => a.name.localeCompare(b.name)).map((player) => (
@@ -128,10 +141,17 @@ const Schedule = () => {
               ))}
             </SelectContent>
           </Select>
+          <Input
+            type="text"
+            placeholder="Or enter new player name"
+            value={newPlayerName}
+            onChange={(e) => setNewPlayerName(e.target.value)}
+          />
           <DialogFooter>
             <Button variant="outline" onClick={() => {
               setConfirmJoinDialog({ isOpen: false, teeTime: null });
               setSelectedPlayer(null);
+              setNewPlayerName('');
             }}>
               Cancel
             </Button>
