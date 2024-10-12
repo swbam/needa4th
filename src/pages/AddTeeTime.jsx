@@ -10,6 +10,7 @@ import { DatePicker } from "@/components/ui/date-picker";
 import { useAddTeeTime } from '../integrations/supabase/hooks/useTeeTimes';
 import { useSupabaseAuth } from '../integrations/supabase/auth';
 import { useCourses } from '../integrations/supabase/hooks/courses';
+import { usePlayers } from '../integrations/supabase/hooks/players';
 import { toast } from "sonner";
 import { format } from 'date-fns';
 
@@ -19,6 +20,7 @@ const AddTeeTime = () => {
   const addTeeTimeMutation = useAddTeeTime();
   const { user } = useSupabaseAuth();
   const { data: courses, isLoading: coursesLoading } = useCourses();
+  const { data: players, isLoading: playersLoading } = usePlayers();
 
   const onSubmit = async (data) => {
     if (!user) {
@@ -27,10 +29,17 @@ const AddTeeTime = () => {
     }
     try {
       const formattedDateTime = format(new Date(`${data.date}T${data.time}`), "yyyy-MM-dd'T'HH:mm:ssXXX");
+      const organizer = players.find(player => player.name.toLowerCase().startsWith(data.organizer.toLowerCase()));
+      
+      if (!organizer) {
+        toast.error("Organizer not found. Please enter a valid name.");
+        return;
+      }
+
       const newTeeTime = {
         date_time: formattedDateTime,
         course_id: parseInt(data.course),
-        organizer_id: user.id,
+        organizer_id: organizer.id,
       };
       await addTeeTimeMutation.mutateAsync(newTeeTime);
       toast.success("Tee time added successfully!");
@@ -101,6 +110,16 @@ const AddTeeTime = () => {
                   )}
                 />
                 {errors.course && <span className="text-red-500 text-sm">{errors.course.message}</span>}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="organizer">Organizer Name</Label>
+                <Controller
+                  name="organizer"
+                  control={control}
+                  rules={{ required: "Organizer name is required" }}
+                  render={({ field }) => <Input type="text" id="organizer" {...field} className="w-full" placeholder="Enter organizer's first name" />}
+                />
+                {errors.organizer && <span className="text-red-500 text-sm">{errors.organizer.message}</span>}
               </div>
               <Button type="submit" className="w-full bg-[#006747] hover:bg-[#005236] text-white">
                 Add Tee Time
