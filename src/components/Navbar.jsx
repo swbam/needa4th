@@ -11,13 +11,9 @@ const Navbar = () => {
             aria-label="needa4th"
           >
             <img
-              src="/needa4th-logo-white.png"
+              src="/logo-white.png"
               alt="needa4th logo"
               className="h-7"
-              onError={(e) => {
-                e.target.onerror = null;
-                e.target.src = '/needa4th-logo-green.png';
-              }}
             />
           </Link>
         </div>
