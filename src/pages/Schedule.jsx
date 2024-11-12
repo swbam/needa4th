@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
 import { format, parseISO, isFuture } from 'date-fns';
 import { useTeeTimes, useUpdateTeeTime } from '../integrations/supabase/hooks/useTeeTimes';
 import { usePlayers, useAddPlayer } from '../integrations/supabase/hooks/players';
@@ -38,23 +37,27 @@ const Schedule = () => {
       toast.error("Please select a player or enter a new player name.");
       return;
     }
+
     try {
       let playerToAdd;
       if (newPlayerName.trim()) {
-        const { data: newPlayer } = await addPlayerMutation.mutateAsync({ name: newPlayerName.trim() });
+        const newPlayer = await addPlayerMutation.mutateAsync({ name: newPlayerName.trim() });
         playerToAdd = newPlayer;
       } else {
         playerToAdd = players.find(p => p.id === selectedPlayer);
       }
 
+      const currentTeeTime = confirmJoinDialog.teeTime;
       const updatedAttendees = [
-        ...(confirmJoinDialog.teeTime.attendees || []),
+        ...(currentTeeTime.attendees || []),
         { player: { id: playerToAdd.id, name: playerToAdd.name } }
       ];
+
       await updateTeeMutation.mutateAsync({
-        id: confirmJoinDialog.teeTime.id,
+        id: currentTeeTime.id,
         attendees: updatedAttendees
       });
+
       toast.success("Successfully joined the tee time!");
       setConfirmJoinDialog({ isOpen: false, teeTime: null });
       setSelectedPlayer(null);
