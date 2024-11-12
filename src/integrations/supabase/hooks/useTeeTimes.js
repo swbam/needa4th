@@ -15,8 +15,7 @@ const fromSupabase = async (query) => {
                 organizer_id: 1,
                 attendees: [
                     { player: { id: 1, name: 'Parker Smith' } },
-                    { player: { id: 2, name: 'Jesus Rios' } },
-                    { player: { id: 3, name: 'Dominic Nanni' } }
+                    { player: { id: 2, name: 'Jesus Rios' } }
                 ]
             },
             {
@@ -25,9 +24,8 @@ const fromSupabase = async (query) => {
                 course: { id: 2, name: 'Towhee' },
                 organizer_id: 2,
                 attendees: [
-                    { player: { id: 2, name: 'Jesus Rios' } },
-                    { player: { id: 4, name: 'Connor Stanley' } },
-                    { player: { id: 5, name: 'Derek Kozakiewicz' } }
+                    { player: { id: 3, name: 'Dominic Nanni' } },
+                    { player: { id: 4, name: 'Connor Stanley' } }
                 ]
             },
             {
@@ -36,9 +34,8 @@ const fromSupabase = async (query) => {
                 course: { id: 3, name: 'Harpeth Hills' },
                 organizer_id: 3,
                 attendees: [
-                    { player: { id: 3, name: 'Dominic Nanni' } },
-                    { player: { id: 1, name: 'Parker Smith' } },
-                    { player: { id: 5, name: 'Derek Kozakiewicz' } }
+                    { player: { id: 5, name: 'Derek Kozakiewicz' } },
+                    { player: { id: 1, name: 'Parker Smith' } }
                 ]
             },
             {
@@ -47,9 +44,8 @@ const fromSupabase = async (query) => {
                 course: { id: 4, name: 'McCabe' },
                 organizer_id: 4,
                 attendees: [
-                    { player: { id: 4, name: 'Connor Stanley' } },
-                    { player: { id: 1, name: 'Parker Smith' } },
-                    { player: { id: 2, name: 'Jesus Rios' } }
+                    { player: { id: 2, name: 'Jesus Rios' } },
+                    { player: { id: 3, name: 'Dominic Nanni' } }
                 ]
             },
             {
@@ -58,9 +54,8 @@ const fromSupabase = async (query) => {
                 course: { id: 5, name: 'Ted Rhodes' },
                 organizer_id: 5,
                 attendees: [
-                    { player: { id: 5, name: 'Derek Kozakiewicz' } },
-                    { player: { id: 3, name: 'Dominic Nanni' } },
-                    { player: { id: 4, name: 'Connor Stanley' } }
+                    { player: { id: 4, name: 'Connor Stanley' } },
+                    { player: { id: 5, name: 'Derek Kozakiewicz' } }
                 ]
             }
         ];
