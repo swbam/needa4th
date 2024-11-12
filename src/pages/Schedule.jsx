@@ -34,27 +34,46 @@ const Schedule = () => {
       toast.error("Please sign in to join a tee time.");
       return;
     }
+
     if (!selectedPlayer && !newPlayerName.trim()) {
       toast.error("Please select a player or enter a new player name.");
       return;
     }
+
     try {
       let playerToAdd;
       if (newPlayerName.trim()) {
-        const { data: newPlayer } = await addPlayerMutation.mutateAsync({ name: newPlayerName.trim() });
-        playerToAdd = newPlayer;
+        const result = await addPlayerMutation.mutateAsync({ name: newPlayerName.trim() });
+        playerToAdd = result[0]; // Supabase returns an array with the inserted item
       } else {
-        playerToAdd = players.find(p => p.id === selectedPlayer);
+        playerToAdd = players.find(p => p.id === parseInt(selectedPlayer));
+      }
+
+      if (!playerToAdd) {
+        toast.error("Failed to find or create player.");
+        return;
+      }
+
+      // Check if player is already in the tee time
+      const isPlayerAlreadyInTeeTime = confirmJoinDialog.teeTime.attendees.some(
+        a => a.player.id === playerToAdd.id
+      );
+
+      if (isPlayerAlreadyInTeeTime) {
+        toast.error("This player is already in the tee time.");
+        return;
       }
 
       const updatedAttendees = [
-        ...(confirmJoinDialog.teeTime.attendees || []),
+        ...confirmJoinDialog.teeTime.attendees,
         { player: { id: playerToAdd.id, name: playerToAdd.name } }
       ];
+
       await updateTeeMutation.mutateAsync({
         id: confirmJoinDialog.teeTime.id,
         attendees: updatedAttendees
       });
+
       toast.success("Successfully joined the tee time!");
       setConfirmJoinDialog({ isOpen: false, teeTime: null });
       setSelectedPlayer(null);
@@ -137,7 +156,7 @@ const Schedule = () => {
             </SelectTrigger>
             <SelectContent>
               {players && players.sort((a, b) => a.name.localeCompare(b.name)).map((player) => (
-                <SelectItem key={player.id} value={player.id}>{player.name}</SelectItem>
+                <SelectItem key={player.id} value={player.id.toString()}>{player.name}</SelectItem>
               ))}
             </SelectContent>
           </Select>
