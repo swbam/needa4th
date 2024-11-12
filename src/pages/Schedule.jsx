@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useTeeTimes } from '../integrations/supabase/hooks/useTeeTimes';
 import { usePlayers, useAddPlayer } from '../integrations/supabase/hooks/players';
+import { useUpdateTeeTime } from '../integrations/supabase/hooks/tee_times';
 import { useSupabaseAuth } from '../integrations/supabase/auth';
 import { toast } from "sonner";
 import TeeTimeCard from '../components/schedule/TeeTimeCard';
@@ -9,6 +10,7 @@ import JoinDialog from '../components/schedule/JoinDialog';
 const Schedule = () => {
   const { data: teeTimes, isLoading: teeTimesLoading, error: teeTimesError } = useTeeTimes();
   const { data: players, isLoading: playersLoading, error: playersError } = usePlayers();
+  const updateTeeMutation = useUpdateTeeTime();
   const { user } = useSupabaseAuth();
   const [confirmJoinDialog, setConfirmJoinDialog] = useState({ isOpen: false, teeTime: null });
   const [selectedPlayer, setSelectedPlayer] = useState(null);
