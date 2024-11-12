@@ -76,20 +76,18 @@
 
   body {
     @apply bg-background text-foreground text-sm;
-    font-family: 'BentonSans', sans-serif;
-    font-weight: normal;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   }
+  
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'BentonSans', sans-serif;
-    font-weight: normal;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   }
   h1 { @apply text-2xl; }
   h2 { @apply text-xl; }
   h3 { @apply text-lg; }
   h4, h5, h6 { @apply text-base; }
   button {
-    font-family: 'BentonSans', sans-serif;
-    font-weight: normal;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   }
 }
 
@@ -101,12 +99,10 @@
   color: var(--masters-green);
 }
 
-/* Add styles for buttons */
 button, .button {
   @apply rounded-none font-normal;
 }
 
-/* Style filled buttons */
 button:not([class*="outline"]):not([class*="ghost"]):not([class*="link"]),
 .button:not([class*="outline"]):not([class*="ghost"]):not([class*="link"]) {
   @apply bg-masters-green text-white;
