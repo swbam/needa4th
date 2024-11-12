@@ -42,7 +42,8 @@ const Schedule = () => {
       let playerToAdd;
       if (newPlayerName.trim()) {
         const result = await addPlayerMutation.mutateAsync({ name: newPlayerName.trim() });
-        playerToAdd = result[0]; // Access the first item of the returned array
+        console.log('Add player result:', result);
+        playerToAdd = result[0];
       } else {
         playerToAdd = players.find(p => p.id === selectedPlayer);
       }
@@ -55,7 +56,6 @@ const Schedule = () => {
       const currentTeeTime = confirmJoinDialog.teeTime;
       const currentAttendees = currentTeeTime.attendees || [];
       
-      // Check if player is already in attendees
       const isPlayerAlreadyJoined = currentAttendees.some(
         attendee => attendee.player.id === playerToAdd.id
       );
@@ -69,6 +69,11 @@ const Schedule = () => {
         ...currentAttendees,
         { player: { id: playerToAdd.id, name: playerToAdd.name } }
       ];
+
+      console.log('Updating tee time with:', {
+        id: currentTeeTime.id,
+        attendees: updatedAttendees
+      });
 
       await updateTeeMutation.mutateAsync({
         id: currentTeeTime.id,

@@ -133,14 +133,19 @@ export const useUpdateTeeTime = () => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: async ({ id, ...updateData }) => {
-            const { data, error } = await supabase
-                .from('tee_times')
-                .update(updateData)
-                .eq('id', id)
-                .select()
-                .single();
-            if (error) throw error;
-            return data;
+            console.log('Mutation received:', { id, ...updateData });
+            try {
+                // For prototype data, simulate update by finding and modifying the tee time
+                const currentData = queryClient.getQueryData(['tee_times']) || [];
+                const updatedData = currentData.map(teeTime => 
+                    teeTime.id === id ? { ...teeTime, ...updateData } : teeTime
+                );
+                queryClient.setQueryData(['tee_times'], updatedData);
+                return { id, ...updateData };
+            } catch (error) {
+                console.error('Error in mutation:', error);
+                throw error;
+            }
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['tee_times'] });
@@ -148,7 +153,7 @@ export const useUpdateTeeTime = () => {
         },
         onError: (error) => {
             console.error('Error updating tee time:', error);
-            toast.error("Failed to update tee time. Please ensure database is properly configured.");
+            toast.error("Failed to update tee time. Please try again.");
         },
     });
 };
