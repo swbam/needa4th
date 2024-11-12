@@ -41,7 +41,6 @@ const Schedule = () => {
     try {
       let playerToAdd;
       if (newPlayerName.trim()) {
-        // Add new player to Supabase
         const { data: newPlayer } = await addPlayerMutation.mutateAsync({ name: newPlayerName.trim() });
         playerToAdd = newPlayer;
       } else {
