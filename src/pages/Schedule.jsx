@@ -41,15 +41,32 @@ const Schedule = () => {
     try {
       let playerToAdd;
       if (newPlayerName.trim()) {
-        const newPlayer = await addPlayerMutation.mutateAsync({ name: newPlayerName.trim() });
-        playerToAdd = newPlayer;
+        const result = await addPlayerMutation.mutateAsync({ name: newPlayerName.trim() });
+        playerToAdd = result[0]; // Access the first item of the returned array
       } else {
         playerToAdd = players.find(p => p.id === selectedPlayer);
       }
 
+      if (!playerToAdd) {
+        toast.error("Failed to add player. Please try again.");
+        return;
+      }
+
       const currentTeeTime = confirmJoinDialog.teeTime;
+      const currentAttendees = currentTeeTime.attendees || [];
+      
+      // Check if player is already in attendees
+      const isPlayerAlreadyJoined = currentAttendees.some(
+        attendee => attendee.player.id === playerToAdd.id
+      );
+
+      if (isPlayerAlreadyJoined) {
+        toast.error("This player has already joined this tee time.");
+        return;
+      }
+
       const updatedAttendees = [
-        ...(currentTeeTime.attendees || []),
+        ...currentAttendees,
         { player: { id: playerToAdd.id, name: playerToAdd.name } }
       ];
 
