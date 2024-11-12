@@ -1,16 +1,69 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../supabase';
 import { toast } from "sonner";
-import { format, parseISO } from 'date-fns';
+import { format, parseISO, addDays } from 'date-fns';
 
 const fromSupabase = async (query) => {
     try {
-        const { data, error } = await query;
-        if (error) throw error;
-        return data;
+        // Instead of fetching from Supabase, return our prototype data
+        const today = new Date();
+        const prototypeData = [
+            {
+                id: 1,
+                date_time: addDays(today, 1).toISOString(),
+                course: { id: 1, name: 'Henry Horton' },
+                organizer_id: 1,
+                attendees: [
+                    { player: { id: 1, name: 'Parker Smith' } },
+                    { player: { id: 2, name: 'Jesus Rios' } }
+                ]
+            },
+            {
+                id: 2,
+                date_time: addDays(today, 2).toISOString(),
+                course: { id: 2, name: 'Towhee' },
+                organizer_id: 2,
+                attendees: [
+                    { player: { id: 3, name: 'Dominic Nanni' } },
+                    { player: { id: 4, name: 'Connor Stanley' } }
+                ]
+            },
+            {
+                id: 3,
+                date_time: addDays(today, 3).toISOString(),
+                course: { id: 3, name: 'Harpeth Hills' },
+                organizer_id: 3,
+                attendees: [
+                    { player: { id: 5, name: 'Derek Kozakiewicz' } },
+                    { player: { id: 1, name: 'Parker Smith' } }
+                ]
+            },
+            {
+                id: 4,
+                date_time: addDays(today, 4).toISOString(),
+                course: { id: 4, name: 'McCabe' },
+                organizer_id: 4,
+                attendees: [
+                    { player: { id: 2, name: 'Jesus Rios' } },
+                    { player: { id: 3, name: 'Dominic Nanni' } }
+                ]
+            },
+            {
+                id: 5,
+                date_time: addDays(today, 5).toISOString(),
+                course: { id: 5, name: 'Ted Rhodes' },
+                organizer_id: 5,
+                attendees: [
+                    { player: { id: 4, name: 'Connor Stanley' } },
+                    { player: { id: 5, name: 'Derek Kozakiewicz' } }
+                ]
+            }
+        ];
+
+        return prototypeData;
     } catch (error) {
-        console.error('Supabase query error:', error);
-        throw new Error('Unable to fetch data. Please ensure database tables are properly configured.');
+        console.error('Error fetching tee times:', error);
+        return [];
     }
 };
 
@@ -38,17 +91,12 @@ export const useTeeTimes = () => useQuery({
     queryKey: ['tee_times'],
     queryFn: async () => {
         try {
-            const { data, error } = await supabase
-                .from('tee_times')
-                .select('*, course:course_id(id, name), players_tee_times(player:player_id(id, name))');
-            
-            if (error) throw error;
-            
+            const data = await fromSupabase();
             return data?.map(teeTime => ({
                 ...teeTime,
                 formattedDate: formatDate(teeTime.date_time),
                 formattedTime: formatTime(teeTime.date_time),
-                attendees: teeTime.players_tee_times || []
+                attendees: teeTime.attendees || []
             })) || [];
         } catch (error) {
             console.error('Error fetching tee times:', error);
