@@ -60,6 +60,9 @@ const Schedule = () => {
 
       if (isPlayerAlreadyInTeeTime) {
         toast.error("This player is already in the tee time.");
+        setConfirmJoinDialog({ isOpen: false, teeTime: null });
+        setSelectedPlayer(null);
+        setNewPlayerName('');
         return;
       }
 

@@ -1,5 +1,4 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '../supabase';
 import { toast } from "sonner";
 import { format, parseISO, addDays } from 'date-fns';
 
@@ -112,22 +111,18 @@ export const useUpdateTeeTime = () => {
     
     return useMutation({
         mutationFn: async ({ id, attendees }) => {
-            // For prototype, update the data in memory
             const currentData = queryClient.getQueryData(['tee_times']) || [];
             const updatedData = currentData.map(teeTime => {
                 if (teeTime.id === id) {
                     return {
                         ...teeTime,
-                        attendees: attendees
+                        attendees
                     };
                 }
                 return teeTime;
             });
             
-            // Update the cache immediately
             queryClient.setQueryData(['tee_times'], updatedData);
-            
-            // Return the updated tee time
             return updatedData.find(teeTime => teeTime.id === id);
         },
         onSuccess: () => {
