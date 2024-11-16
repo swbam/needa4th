@@ -112,7 +112,7 @@ export const useUpdateTeeTime = () => {
     
     return useMutation({
         mutationFn: async ({ id, attendees }) => {
-            const currentData = queryClient.getQueryData(['tee_times']) || [];
+            const currentData = queryClient.getQueryData(['tee_times']);
             const updatedData = currentData.map(teeTime => {
                 if (teeTime.id === id) {
                     return {
@@ -123,14 +123,10 @@ export const useUpdateTeeTime = () => {
                 return teeTime;
             });
             
+            queryClient.setQueryData(['tee_times'], updatedData);
             return updatedData.find(teeTime => teeTime.id === id);
         },
-        onSuccess: (updatedTeeTime) => {
-            const currentData = queryClient.getQueryData(['tee_times']) || [];
-            const newData = currentData.map(teeTime => 
-                teeTime.id === updatedTeeTime.id ? updatedTeeTime : teeTime
-            );
-            queryClient.setQueryData(['tee_times'], newData);
+        onSuccess: () => {
             toast.success("Successfully joined the tee time!");
         },
         onError: (error) => {
