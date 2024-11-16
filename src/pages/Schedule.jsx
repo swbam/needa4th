@@ -53,7 +53,6 @@ const Schedule = () => {
         return;
       }
 
-      // Check if player is already in the tee time
       const isPlayerAlreadyInTeeTime = confirmJoinDialog.teeTime.attendees.some(
         a => a.player.id === playerToAdd.id
       );
@@ -76,7 +75,6 @@ const Schedule = () => {
         attendees: updatedAttendees
       });
 
-      toast.success("Successfully joined the tee time!");
       setConfirmJoinDialog({ isOpen: false, teeTime: null });
       setSelectedPlayer(null);
       setNewPlayerName('');

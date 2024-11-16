@@ -99,6 +99,7 @@ export const useTeeTimes = () => useQuery({
             })) || [];
         } catch (error) {
             console.error('Error fetching tee times:', error);
+            toast.error("Failed to fetch tee times");
             return [];
         }
     },
@@ -122,11 +123,19 @@ export const useUpdateTeeTime = () => {
                 return teeTime;
             });
             
-            queryClient.setQueryData(['tee_times'], updatedData);
             return updatedData.find(teeTime => teeTime.id === id);
         },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['tee_times'] });
+        onSuccess: (updatedTeeTime) => {
+            const currentData = queryClient.getQueryData(['tee_times']) || [];
+            const newData = currentData.map(teeTime => 
+                teeTime.id === updatedTeeTime.id ? updatedTeeTime : teeTime
+            );
+            queryClient.setQueryData(['tee_times'], newData);
+            toast.success("Successfully joined the tee time!");
+        },
+        onError: (error) => {
+            console.error('Error updating tee time:', error);
+            toast.error("Failed to join the tee time. Please try again.");
         }
     });
 };
