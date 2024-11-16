@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
 import { format, parseISO, isFuture } from 'date-fns';
 import { useTeeTimes, useUpdateTeeTime } from '../integrations/supabase/hooks/useTeeTimes';
 import { usePlayers, useAddPlayer } from '../integrations/supabase/hooks/players';
@@ -44,7 +43,7 @@ const Schedule = () => {
       let playerToAdd;
       if (newPlayerName.trim()) {
         const result = await addPlayerMutation.mutateAsync({ name: newPlayerName.trim() });
-        playerToAdd = result[0]; // Supabase returns an array with the inserted item
+        playerToAdd = result;
       } else {
         playerToAdd = players.find(p => p.id === parseInt(selectedPlayer));
       }

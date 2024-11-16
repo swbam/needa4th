@@ -107,17 +107,52 @@ export const useTeeTimes = () => useQuery({
     retryDelay: 1000,
 });
 
+export const useUpdateTeeTime = () => {
+    const queryClient = useQueryClient();
+    
+    return useMutation({
+        mutationFn: async ({ id, attendees }) => {
+            // For prototype, update the data in memory
+            const currentData = queryClient.getQueryData(['tee_times']) || [];
+            const updatedData = currentData.map(teeTime => {
+                if (teeTime.id === id) {
+                    return {
+                        ...teeTime,
+                        attendees: attendees
+                    };
+                }
+                return teeTime;
+            });
+            
+            // Update the cache immediately
+            queryClient.setQueryData(['tee_times'], updatedData);
+            
+            // Return the updated tee time
+            return updatedData.find(teeTime => teeTime.id === id);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['tee_times'] });
+        }
+    });
+};
+
 export const useAddTeeTime = () => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: async (newTeeTime) => {
-            const { data, error } = await supabase
-                .from('tee_times')
-                .insert(newTeeTime)
-                .select()
-                .single();
-            if (error) throw error;
-            return data;
+            const currentData = queryClient.getQueryData(['tee_times']) || [];
+            const newId = Math.max(...currentData.map(t => t.id)) + 1;
+            
+            const teeTimeToAdd = {
+                id: newId,
+                ...newTeeTime,
+                attendees: []
+            };
+            
+            const updatedData = [...currentData, teeTimeToAdd];
+            queryClient.setQueryData(['tee_times'], updatedData);
+            
+            return teeTimeToAdd;
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['tee_times'] });
@@ -125,52 +160,7 @@ export const useAddTeeTime = () => {
         },
         onError: (error) => {
             console.error('Error adding tee time:', error);
-            toast.error("Failed to add tee time. Please ensure database is properly configured.");
-        },
-    });
-};
-
-export const useUpdateTeeTime = () => {
-    const queryClient = useQueryClient();
-    return useMutation({
-        mutationFn: async ({ id, ...updateData }) => {
-            const { data, error } = await supabase
-                .from('tee_times')
-                .update(updateData)
-                .eq('id', id)
-                .select()
-                .single();
-            if (error) throw error;
-            return data;
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['tee_times'] });
-            toast.success("Successfully updated tee time.");
-        },
-        onError: (error) => {
-            console.error('Error updating tee time:', error);
-            toast.error("Failed to update tee time. Please ensure database is properly configured.");
-        },
-    });
-};
-
-export const useDeleteTeeTime = () => {
-    const queryClient = useQueryClient();
-    return useMutation({
-        mutationFn: async (id) => {
-            const { error } = await supabase
-                .from('tee_times')
-                .delete()
-                .eq('id', id);
-            if (error) throw error;
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['tee_times'] });
-            toast.success("Successfully deleted tee time.");
-        },
-        onError: (error) => {
-            console.error('Error deleting tee time:', error);
-            toast.error("Failed to delete tee time. Please ensure database is properly configured.");
+            toast.error("Failed to add tee time. Please try again.");
         },
     });
 };
