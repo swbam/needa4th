@@ -11,9 +11,9 @@ const Navbar = () => {
             aria-label="needa4th"
           >
             <img
-              src="/needa4th-logo-green.png"
+              src="/needa4th-logo-white.png"
               alt="needa4th logo"
-              className="h-7"
+              className="h-7 invert"
             />
           </Link>
         </div>
