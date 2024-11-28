@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { format, parseISO, isFuture } from 'date-fns';
-import { useTeeTimes, useUpdateTeeTime } from '../integrations/supabase/hooks/useTeeTimes';
+import { useTeeTimes, useUpdateTeeTime, useAddTeeTime } from '../integrations/supabase/hooks/useTeeTimes';
 import { usePlayers, useAddPlayer } from '../integrations/supabase/hooks/players';
 import { useSupabaseAuth } from '../integrations/supabase/auth';
 import { toast } from "sonner";
@@ -21,14 +21,20 @@ const Schedule = () => {
   const updateTeeMutation = useUpdateTeeTime();
   const addPlayerMutation = useAddPlayer();
 
+  console.log('Current tee times:', teeTimes);
+  console.log('Selected player:', selectedPlayer);
+
   if (teeTimesLoading || playersLoading) return <div className="pt-20">Loading...</div>;
   if (teeTimesError || playersError) return <div className="pt-20">Error: {teeTimesError?.message || playersError?.message}</div>;
 
   const handleJoinClick = (teeTime) => {
+    console.log('Opening join dialog for tee time:', teeTime);
     setConfirmJoinDialog({ isOpen: true, teeTime });
   };
 
   const handleConfirmJoin = async () => {
+    console.log('Confirming join with player:', selectedPlayer || newPlayerName);
+    
     if (!user) {
       toast.error("Please sign in to join a tee time.");
       return;
@@ -42,9 +48,11 @@ const Schedule = () => {
     try {
       let playerToAdd;
       if (newPlayerName.trim()) {
+        console.log('Adding new player:', newPlayerName);
         const result = await addPlayerMutation.mutateAsync({ name: newPlayerName.trim() });
         playerToAdd = result;
       } else {
+        console.log('Using existing player:', selectedPlayer);
         playerToAdd = players.find(p => p.id === parseInt(selectedPlayer));
       }
 
@@ -65,6 +73,7 @@ const Schedule = () => {
         return;
       }
 
+      console.log('Adding player to tee time:', playerToAdd);
       const updatedAttendees = [
         ...confirmJoinDialog.teeTime.attendees,
         { player: { id: playerToAdd.id, name: playerToAdd.name } }
@@ -75,6 +84,7 @@ const Schedule = () => {
         attendees: updatedAttendees
       });
 
+      toast.success("Successfully joined the tee time!");
       setConfirmJoinDialog({ isOpen: false, teeTime: null });
       setSelectedPlayer(null);
       setNewPlayerName('');
