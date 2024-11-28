@@ -5,10 +5,17 @@ import { format, parseISO } from 'date-fns';
 import { PlusCircle } from 'lucide-react';
 
 const TeeTimeCard = ({ teeTime, onJoinClick }) => {
+  console.log('TeeTimeCard rendered with teeTime:', teeTime);
+  
   const uniqueAttendees = teeTime.attendees ? 
     [...new Set(teeTime.attendees.map(a => a.player.id))].map(id => 
       teeTime.attendees.find(a => a.player.id === id).player
     ) : [];
+
+  const handleJoinClick = () => {
+    console.log('Join button clicked for teeTime:', teeTime);
+    onJoinClick(teeTime);
+  };
 
   return (
     <Card className="bg-white shadow-lg border-none">
@@ -29,7 +36,7 @@ const TeeTimeCard = ({ teeTime, onJoinClick }) => {
                 uniqueAttendees[idx].name
               ) : (
                 <Button 
-                  onClick={() => onJoinClick(teeTime)} 
+                  onClick={handleJoinClick} 
                   variant="outline" 
                   size="sm"
                   className="w-full text-[#006747] border-[#006747] hover:bg-[#006747] hover:text-white"
