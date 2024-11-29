@@ -10,11 +10,11 @@ import { toast } from "sonner";
 const JoinTeeTimeDialog = ({ isOpen, onClose, teeTime, players, user }) => {
   const [selectedPlayer, setSelectedPlayer] = useState(null);
   const [newPlayerName, setNewPlayerName] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const updateTeeMutation = useUpdateTeeTime();
   const addPlayerMutation = useAddPlayer();
 
-  // Set default selected player when dialog opens
   useEffect(() => {
     if (isOpen && players && players.length > 0) {
       console.log('Setting default player:', players[0]);
@@ -23,25 +23,27 @@ const JoinTeeTimeDialog = ({ isOpen, onClose, teeTime, players, user }) => {
   }, [isOpen, players]);
 
   const handleConfirmJoin = async () => {
-    console.log('Starting join process with selected player:', selectedPlayer);
-    console.log('Current tee time:', teeTime);
-    
-    if (!user) {
-      toast.error("Please sign in to join a tee time.");
-      return;
-    }
-
-    if (!selectedPlayer && !newPlayerName.trim()) {
-      toast.error("Please select a player or enter a new player name.");
-      return;
-    }
-
     try {
+      setIsSubmitting(true);
+      console.log('Starting join process with selected player:', selectedPlayer);
+      console.log('Current tee time:', teeTime);
+      
+      if (!user) {
+        toast.error("Please sign in to join a tee time.");
+        return;
+      }
+
+      if (!selectedPlayer && !newPlayerName.trim()) {
+        toast.error("Please select a player or enter a new player name.");
+        return;
+      }
+
       let playerToAdd;
       if (newPlayerName.trim()) {
         console.log('Adding new player:', newPlayerName);
         const result = await addPlayerMutation.mutateAsync({ name: newPlayerName.trim() });
         playerToAdd = result;
+        console.log('New player added:', playerToAdd);
       } else {
         console.log('Using existing player:', selectedPlayer);
         playerToAdd = players.find(p => p.id === parseInt(selectedPlayer));
@@ -79,13 +81,15 @@ const JoinTeeTimeDialog = ({ isOpen, onClose, teeTime, players, user }) => {
         attendees: updatedAttendees
       });
 
-      toast.success("Successfully joined the tee time!");
+      toast.success(`Successfully added ${playerToAdd.name} to the tee time!`);
       setSelectedPlayer(null);
       setNewPlayerName('');
       onClose();
     } catch (error) {
       console.error("Error joining tee time:", error);
       toast.error("Failed to join the tee time. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -137,8 +141,9 @@ const JoinTeeTimeDialog = ({ isOpen, onClose, teeTime, players, user }) => {
           <Button 
             onClick={handleConfirmJoin} 
             className="bg-[#006747] hover:bg-[#005236]"
+            disabled={isSubmitting}
           >
-            Confirm
+            {isSubmitting ? 'Adding...' : 'Confirm'}
           </Button>
         </DialogFooter>
       </DialogContent>
