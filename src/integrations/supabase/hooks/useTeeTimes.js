@@ -112,28 +112,54 @@ export const useUpdateTeeTime = () => {
     
     return useMutation({
         mutationFn: async ({ id, attendees }) => {
-            // Since we're using prototype data, we'll update it in memory
-            const currentData = queryClient.getQueryData(['tee_times']);
-            const updatedData = currentData.map(teeTime => {
-                if (teeTime.id === id) {
-                    return {
-                        ...teeTime,
-                        attendees
-                    };
+            try {
+                console.log('Starting mutation with:', { id, attendees });
+                
+                // Get current data
+                const currentData = queryClient.getQueryData(['tee_times']);
+                if (!currentData) {
+                    throw new Error('No tee times data found');
                 }
-                return teeTime;
-            });
-            
-            // Update the cache immediately
-            queryClient.setQueryData(['tee_times'], updatedData);
-            return updatedData.find(teeTime => teeTime.id === id);
+
+                // Create updated data
+                const updatedData = currentData.map(teeTime => {
+                    if (teeTime.id === id) {
+                        console.log('Updating tee time:', id, 'with attendees:', attendees);
+                        return {
+                            ...teeTime,
+                            attendees: attendees
+                        };
+                    }
+                    return teeTime;
+                });
+
+                // Update cache immediately for optimistic updates
+                queryClient.setQueryData(['tee_times'], updatedData);
+
+                // Return the updated tee time
+                const updatedTeeTime = updatedData.find(teeTime => teeTime.id === id);
+                if (!updatedTeeTime) {
+                    throw new Error('Failed to find updated tee time');
+                }
+
+                console.log('Successfully updated tee time:', updatedTeeTime);
+                return updatedTeeTime;
+            } catch (error) {
+                console.error('Error in mutation:', error);
+                throw error;
+            }
         },
-        onSuccess: () => {
+        onSuccess: (data) => {
+            console.log('Mutation successful, invalidating queries');
             queryClient.invalidateQueries({ queryKey: ['tee_times'] });
+            const playerNames = data.attendees.map(a => a.player.name).join(', ');
+            toast.success(`Successfully updated tee time with players: ${playerNames}`);
         },
         onError: (error) => {
-            console.error('Error updating tee time:', error);
-            toast.error("Failed to update tee time");
+            console.error('Mutation error:', error);
+            toast.error("Failed to update tee time. Please try again.");
+            // Revert optimistic update on error
+            queryClient.invalidateQueries({ queryKey: ['tee_times'] });
         }
     });
 };
