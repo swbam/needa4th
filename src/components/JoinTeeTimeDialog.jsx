@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
@@ -14,8 +14,16 @@ const JoinTeeTimeDialog = ({ isOpen, onClose, teeTime, players, user }) => {
   const updateTeeMutation = useUpdateTeeTime();
   const addPlayerMutation = useAddPlayer();
 
+  // Set default selected player when dialog opens
+  useEffect(() => {
+    if (isOpen && players && players.length > 0) {
+      console.log('Setting default player:', players[0]);
+      setSelectedPlayer(players[0].id.toString());
+    }
+  }, [isOpen, players]);
+
   const handleConfirmJoin = async () => {
-    console.log('Starting join process');
+    console.log('Starting join process with selected player:', selectedPlayer);
     
     if (!user) {
       toast.error("Please sign in to join a tee time.");
@@ -43,6 +51,7 @@ const JoinTeeTimeDialog = ({ isOpen, onClose, teeTime, players, user }) => {
         return;
       }
 
+      // Check if player is already in the tee time
       const isPlayerAlreadyInTeeTime = teeTime.attendees?.some(
         a => a.player.id === playerToAdd.id
       );
@@ -93,7 +102,11 @@ const JoinTeeTimeDialog = ({ isOpen, onClose, teeTime, players, user }) => {
             Select an existing player or add a new one to join this tee time.
           </DialogDescription>
         </DialogHeader>
-        <Select onValueChange={setSelectedPlayer} value={selectedPlayer}>
+        <Select 
+          onValueChange={setSelectedPlayer} 
+          value={selectedPlayer}
+          defaultValue={players?.[0]?.id?.toString()}
+        >
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Select Your Name" />
           </SelectTrigger>
