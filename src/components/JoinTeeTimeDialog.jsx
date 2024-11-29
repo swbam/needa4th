@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogD
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
 import { useUpdateTeeTime } from '@/integrations/supabase/hooks/useTeeTimes';
 import { useAddPlayer } from '@/integrations/supabase/hooks/players';
 import { toast } from "sonner";
@@ -17,7 +18,6 @@ const JoinTeeTimeDialog = ({ isOpen, onClose, teeTime, players, user }) => {
 
   useEffect(() => {
     if (isOpen && players && players.length > 0) {
-      console.log('Setting default player:', players[0]);
       setSelectedPlayer(players[0].id.toString());
     }
   }, [isOpen, players]);
@@ -25,8 +25,7 @@ const JoinTeeTimeDialog = ({ isOpen, onClose, teeTime, players, user }) => {
   const handleConfirmJoin = async () => {
     try {
       setIsSubmitting(true);
-      console.log('Starting join process with selected player:', selectedPlayer);
-      console.log('Current tee time:', teeTime);
+      console.log('Starting join process');
       
       if (!user) {
         toast.error("Please sign in to join a tee time.");
@@ -54,19 +53,15 @@ const JoinTeeTimeDialog = ({ isOpen, onClose, teeTime, players, user }) => {
         return;
       }
 
-      // Check if player is already in the tee time
       const currentAttendees = teeTime.attendees || [];
-      console.log('Current attendees:', currentAttendees);
       
-      const isPlayerAlreadyInTeeTime = currentAttendees.some(
-        a => a.player.id === playerToAdd.id
-      );
-
-      if (isPlayerAlreadyInTeeTime) {
+      if (currentAttendees.some(a => a.player.id === playerToAdd.id)) {
         toast.error("This player is already in the tee time.");
-        onClose();
-        setSelectedPlayer(null);
-        setNewPlayerName('');
+        return;
+      }
+
+      if (currentAttendees.length >= 4) {
+        toast.error("This tee time is already full.");
         return;
       }
 
@@ -77,16 +72,13 @@ const JoinTeeTimeDialog = ({ isOpen, onClose, teeTime, players, user }) => {
 
       console.log('Updating tee time with new attendees:', updatedAttendees);
       
-      // Wait for the mutation to complete
       await updateTeeMutation.mutateAsync({
         id: teeTime.id,
         attendees: updatedAttendees
       });
 
       toast.success(`Successfully added ${playerToAdd.name} to the tee time!`);
-      setSelectedPlayer(null);
-      setNewPlayerName('');
-      onClose();
+      handleClose();
     } catch (error) {
       console.error("Error joining tee time:", error);
       toast.error("Failed to join the tee time. Please try again.");
@@ -103,49 +95,61 @@ const JoinTeeTimeDialog = ({ isOpen, onClose, teeTime, players, user }) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent>
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Join Tee Time</DialogTitle>
+          <DialogTitle className="text-[#006747] text-xl">Join Tee Time</DialogTitle>
           <DialogDescription>
             Select an existing player or add a new one to join this tee time.
           </DialogDescription>
         </DialogHeader>
-        <Select 
-          onValueChange={setSelectedPlayer} 
-          value={selectedPlayer}
-          defaultValue={players?.[0]?.id?.toString()}
-        >
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select Your Name" />
-          </SelectTrigger>
-          <SelectContent>
-            {players && players.sort((a, b) => a.name.localeCompare(b.name)).map((player) => (
-              <SelectItem key={player.id} value={player.id.toString()}>{player.name}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t" />
+        <div className="space-y-4 py-4">
+          <Select 
+            onValueChange={setSelectedPlayer} 
+            value={selectedPlayer}
+            defaultValue={players?.[0]?.id?.toString()}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select Your Name" />
+            </SelectTrigger>
+            <SelectContent>
+              {players && players.sort((a, b) => a.name.localeCompare(b.name)).map((player) => (
+                <SelectItem key={player.id} value={player.id.toString()}>{player.name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">Or</span>
+            </div>
           </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background px-2 text-muted-foreground">Or</span>
-          </div>
+          <Input
+            type="text"
+            placeholder="Add New Player"
+            value={newPlayerName}
+            onChange={(e) => setNewPlayerName(e.target.value)}
+            className="w-full"
+          />
         </div>
-        <Input
-          type="text"
-          placeholder="Add New Player"
-          value={newPlayerName}
-          onChange={(e) => setNewPlayerName(e.target.value)}
-        />
         <DialogFooter>
-          <Button variant="outline" onClick={handleClose}>Cancel</Button>
+          <Button variant="outline" onClick={handleClose} disabled={isSubmitting}>
+            Cancel
+          </Button>
           <Button 
             onClick={handleConfirmJoin} 
-            className="bg-[#006747] hover:bg-[#005236]"
+            className="bg-[#006747] hover:bg-[#005236] text-white"
             disabled={isSubmitting}
           >
-            {isSubmitting ? 'Adding...' : 'Confirm'}
+            {isSubmitting ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Adding...
+              </>
+            ) : (
+              'Confirm'
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>
