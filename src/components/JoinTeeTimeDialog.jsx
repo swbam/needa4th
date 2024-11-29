@@ -55,7 +55,7 @@ const JoinTeeTimeDialog = ({ isOpen, onClose, teeTime, players, user }) => {
       }
 
       // Check if player is already in the tee time
-      const currentAttendees = Array.isArray(teeTime.attendees) ? teeTime.attendees : [];
+      const currentAttendees = teeTime.attendees || [];
       console.log('Current attendees:', currentAttendees);
       
       const isPlayerAlreadyInTeeTime = currentAttendees.some(
@@ -76,6 +76,8 @@ const JoinTeeTimeDialog = ({ isOpen, onClose, teeTime, players, user }) => {
       ];
 
       console.log('Updating tee time with new attendees:', updatedAttendees);
+      
+      // Wait for the mutation to complete
       await updateTeeMutation.mutateAsync({
         id: teeTime.id,
         attendees: updatedAttendees

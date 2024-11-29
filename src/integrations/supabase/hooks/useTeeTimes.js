@@ -112,6 +112,7 @@ export const useUpdateTeeTime = () => {
     
     return useMutation({
         mutationFn: async ({ id, attendees }) => {
+            // Since we're using prototype data, we'll update it in memory
             const currentData = queryClient.getQueryData(['tee_times']);
             const updatedData = currentData.map(teeTime => {
                 if (teeTime.id === id) {
@@ -123,15 +124,16 @@ export const useUpdateTeeTime = () => {
                 return teeTime;
             });
             
+            // Update the cache immediately
             queryClient.setQueryData(['tee_times'], updatedData);
             return updatedData.find(teeTime => teeTime.id === id);
         },
         onSuccess: () => {
-            toast.success("Successfully joined the tee time!");
+            queryClient.invalidateQueries({ queryKey: ['tee_times'] });
         },
         onError: (error) => {
             console.error('Error updating tee time:', error);
-            toast.error("Failed to join the tee time. Please try again.");
+            toast.error("Failed to update tee time");
         }
     });
 };
