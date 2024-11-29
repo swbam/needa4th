@@ -24,6 +24,7 @@ const JoinTeeTimeDialog = ({ isOpen, onClose, teeTime, players, user }) => {
 
   const handleConfirmJoin = async () => {
     console.log('Starting join process with selected player:', selectedPlayer);
+    console.log('Current tee time:', teeTime);
     
     if (!user) {
       toast.error("Please sign in to join a tee time.");
@@ -52,7 +53,10 @@ const JoinTeeTimeDialog = ({ isOpen, onClose, teeTime, players, user }) => {
       }
 
       // Check if player is already in the tee time
-      const isPlayerAlreadyInTeeTime = teeTime.attendees?.some(
+      const currentAttendees = Array.isArray(teeTime.attendees) ? teeTime.attendees : [];
+      console.log('Current attendees:', currentAttendees);
+      
+      const isPlayerAlreadyInTeeTime = currentAttendees.some(
         a => a.player.id === playerToAdd.id
       );
 
@@ -64,8 +68,6 @@ const JoinTeeTimeDialog = ({ isOpen, onClose, teeTime, players, user }) => {
         return;
       }
 
-      console.log('Current tee time attendees:', teeTime.attendees);
-      const currentAttendees = teeTime.attendees || [];
       const updatedAttendees = [
         ...currentAttendees,
         { player: { id: playerToAdd.id, name: playerToAdd.name } }
